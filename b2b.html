@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nucistion B2B Clinical & Fitness Portal</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Link -->
+  <link rel="stylesheet" href="b2b_styles.css">
+</head>
+<body>
+
+  <!-- ==================== MAIN DASHBOARD LAYOUT ==================== -->
+  <div class="dashboard-container">
+    
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">Nuci<span>stion</span></div>
+        <span class="logo-badge">B2B Portal</span>
+      </div>
+
+      <!-- DUAL-MODE TOGGLE SWITCH -->
+      <div class="mode-toggle-box">
+        <span class="mode-toggle-label">โหมดระบบการใช้งาน</span>
+        <div class="mode-toggle-buttons">
+          <button id="mode-btn-ncd" class="mode-btn active" onclick="switchB2BMode('ncd')">
+            <span class="btn-icon">🏥</span> NCD Clinic
+          </button>
+          <button id="mode-btn-fitness" class="mode-btn" onclick="switchB2BMode('fitness')">
+            <span class="btn-icon">🏋️‍♂️</span> Fitness Gym
+          </button>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li>
+            <button class="nav-link active" id="nav-btn-patients" onclick="switchB2BTab('patients')">
+              <span class="link-icon">👥</span> รายชื่อผู้ป่วย / สมาชิก
+            </button>
+          </li>
+          <li>
+            <button class="nav-link" id="nav-btn-calendar" onclick="switchB2BTab('calendar')">
+              <span class="link-icon">📅</span> ตารางนัดหมายและเช็คประวัติ
+            </button>
+          </li>
+          <li>
+            <button class="nav-link" id="nav-btn-analytics" onclick="switchB2BTab('analytics')">
+              <span class="link-icon">📈</span> สถิติวิเคราะห์ภาพรวม (Cohort)
+            </button>
+          </li>
+          <li>
+            <button class="nav-link" id="nav-btn-research" onclick="switchB2BTab('research')">
+              <span class="link-icon">🔬</span> งานวิจัย & นโยบายสาธารณสุข
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="avatar" id="portal-avatar">⚕️</div>
+          <div class="user-info">
+            <div class="user-name" id="portal-user-name">นพ. สมชาย รักดี</div>
+            <div class="user-role" id="portal-user-role">แพทย์เฉพาะทาง NCDs</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN SECTION ==================== -->
+    <main class="main-content">
+      
+      <!-- TOP HEADER -->
+      <header class="header">
+        <div class="header-search-area">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="global-search" placeholder="ค้นหาชื่อผู้ป่วย, เลขบัตร หรือเป้าหมาย..." oninput="handleGlobalSearch()">
+        </div>
+        <div class="header-status-area">
+          <span class="status-indicator-dot"></span>
+          <span class="status-txt" id="header-status-title">ระบบพอร์ทัลคลินิกโรคเรื้อรัง (NCD Program)</span>
+        </div>
+      </header>
+
+      <!-- ==================== TAB 1: PATIENT REGISTRY & PROFILE ==================== -->
+      <section class="tab-panel active" id="panel-patients">
+        <div class="split-layout">
+          
+          <!-- LEFT COLUMN: Patient Registry List (A.1, A.2) -->
+          <div class="split-list-panel">
+            <div class="panel-section-head">
+              <span>ทะเบียนรายชื่อระบบ</span>
+              <span class="count-badge" id="patient-count-badge">0 คน</span>
+            </div>
+
+            <!-- Filter Grid -->
+            <div class="registry-filter-box">
+              <div class="filter-row">
+                <select id="filter-risk" class="filter-select" onchange="applyRegistryFilters()">
+                  <option value="all">ทุกระดับความเสี่ยง</option>
+                  <option value="red">🔴 เสี่ยงสูง (High Risk)</option>
+                  <option value="yellow">🟡 เสี่ยงปานกลาง</option>
+                  <option value="green">🟢 เสี่ยงต่ำ/ควบคุมได้</option>
+                </select>
+                <select id="filter-type" class="filter-select" onchange="applyRegistryFilters()">
+                  <option value="all" id="filter-type-opt-all">ทุกประเภทโรค</option>
+                  <option value="Diabetes" class="clinic-only-opt">🩸 เบาหวาน (Diabetes)</option>
+                  <option value="Hypertension" class="clinic-only-opt">💊 ความดันโลหิตสูง</option>
+                  <option value="Obesity" class="clinic-only-opt">⚖️ โรคอ้วน</option>
+                  <option value="Bulk" class="fitness-only-opt" style="display:none;">🏋️‍♂️ Bulk (เพิ่มกล้าม)</option>
+                  <option value="Cut" class="fitness-only-opt" style="display:none;">🏃 Cut (ลดไขมัน)</option>
+                  <option value="Recomp" class="fitness-only-opt" style="display:none;">⚖️ Recomp</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Registry Scroll Container -->
+            <div class="registry-list" id="registry-items-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: Patient Detail Sheet (A.3, B.1, B.2, B.3, B.4, B.5) -->
+          <div class="split-detail-panel">
+            
+            <div id="no-patient-selected-view" class="center-empty-state">
+              <div style="font-size:3rem; margin-bottom:12px;">👥</div>
+              <h3>กรุณาเลือกรายชื่อสมาชิกหรือผู้ป่วย</h3>
+              <p>เลือกรายชื่อจากแถบด้านซ้ายเพื่อเปิดดูประวัติสุขภาพ บทวิเคราะห์ AI และผลแล็บโดยละเอียด</p>
+            </div>
+
+            <div id="patient-active-details" style="display: none;">
+              
+              <!-- Patient Card Top Profile Header -->
+              <div class="detail-header-card">
+                <div class="dh-left">
+                  <div class="dh-avatar-large" id="det-avatar">👩‍🦳</div>
+                  <div class="dh-info">
+                    <h2 id="det-name">คุณป้าสมใจ รักสุขภาพ</h2>
+                    <div class="dh-tags-row">
+                      <span class="badge badge-risk-red" id="det-risk-badge">เสี่ยงสูง 🔴</span>
+                      <span class="badge badge-ncd-tag" id="det-program-badge">โปรแกรมเบาหวาน (Diabetes)</span>
+                      <span class="badge badge-sub" id="det-enroll-date">ลงทะเบียน: 12 เม.ย. 2026</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="dh-right">
+                  <button class="export-btn" onclick="openPrintPdfModal()">📄 ส่งออกรายงานตรวจ (PDF)</button>
+                </div>
+              </div>
+
+              <!-- AI Medical Summary & Protein/LBM Target Cards (B.1) -->
+              <div class="detail-grid-row">
+                
+                <!-- Clinical Intelligence: AI Medical Summary Card -->
+                <div class="dashboard-card border-accent" style="flex: 2;">
+                  <div class="card-title-row">
+                    <span class="card-icon">🧠</span>
+                    <h3 class="card-title" id="ai-card-title">บทวิเคราะห์อาการโดยแพทย์ AI (Claude Clinical Summary)</h3>
+                  </div>
+                  <div class="ai-clinical-bullets" id="det-ai-bullets">
+                    <!-- Dynamic bullet points in Thai -->
+                  </div>
+                </div>
+
+                <!-- Protein Target (Fitness Mode) or Fasting glucose (NCD Mode) -->
+                <div class="dashboard-card" style="flex: 1;" id="dynamic-kpi-card">
+                  <!-- Swapped dynamic values (Protein target vs Sugar/BP outcome) -->
+                </div>
+              </div>
+
+              <!-- Dual-Axis correlation charts & Nutrient safety trends (B.2, B.4) -->
+              <div class="detail-grid-row">
+                
+                <!-- Food-Lab Correlation dual-axis SVG Chart (B.2) -->
+                <div class="dashboard-card" style="flex: 1;">
+                  <div class="card-title-row">
+                    <span class="card-icon">📊</span>
+                    <h3 class="card-title" id="corr-chart-title">กราฟความสัมพันธ์: อาหารคาร์โบไฮเดรตสะสม vs ค่าน้ำตาล HbA1c (90 วัน)</h3>
+                  </div>
+                  <div class="svg-chart-container" id="correlation-svg-container">
+                    <!-- Dynamic Dual Axis Chart Rendered here -->
+                  </div>
+                  <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-color primary-bg"></span> ปริมาณสารอาหารสะสมเฉลี่ย (คาร์บ/โซเดียม)</span>
+                    <span class="legend-item"><span class="legend-color danger-bg"></span> ผลแล็บตรวจทางคลินิก (HbA1c/ความดัน/น้ำหนัก)</span>
+                  </div>
+                </div>
+
+                <!-- SVG Weekly Nutrition target vs WHO guidelines (B.4) -->
+                <div class="dashboard-card" style="flex: 1;">
+                  <div class="card-title-row">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">แนวโน้มสารอาหารรอบสัปดาห์ปัจจุบัน เทียบกับเกณฑ์ความปลอดภัยมาตรฐาน</h3>
+                  </div>
+                  <div class="svg-chart-container" id="safety-trends-svg-container">
+                    <!-- Dynamic target indicator bar charts -->
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Editable Lab inputs and Lab logs (B.3) -->
+              <div class="dashboard-card">
+                <div class="card-title-row" style="justify-content: space-between;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="card-icon">🧬</span>
+                    <h3 class="card-title" id="lab-history-title">ประวัติบันทึกผลแล็บทางคลินิก (Lab History & Measurements)</h3>
+                  </div>
+                  <button class="add-btn-accent" onclick="toggleLabFormPopup(true)">➕ กรอกผลแล็บ/วัดสัดส่วนใหม่</button>
+                </div>
+                
+                <!-- Lab History Table -->
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr id="lab-table-headers">
+                        <th>วันที่วัด</th>
+                        <th>HbA1c (%)</th>
+                        <th>ความดันโลหิต (mmHg)</th>
+                        <th>ไขมันคอเลสเตอรอล (mg/dL)</th>
+                        <th>น้ำหนักตัว (kg)</th>
+                        <th>รอบเอว (ซม.)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="lab-history-table-body">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================== TAB 2: APPOINTMENT MANAGER (A.4) ==================== -->
+      <section class="tab-panel" id="panel-calendar">
+        <div class="panel-header-section">
+          <h2>📅 ตารางนัดหมายผู้เข้าพบแพทย์ & เทรนเนอร์ประจำสัปดาห์</h2>
+          <p>ตรวจสอบนัดหมายคนไข้พร้อมติดตามสถานะการจดบันทึกอาหารเพื่อวางแผนการรักษาก่อนเข้าห้องตรวจ</p>
+        </div>
+
+        <div class="calendar-workspace">
+          <!-- Left side: mini list of scheduled today -->
+          <div class="calendar-sidebar-list">
+            <h4>คนไข้นัดวันนี้ (Scheduled Today)</h4>
+            <div id="today-appointments-shortlist" class="appt-short-list">
+              <!-- Loaded dynamically -->
+            </div>
+          </div>
+
+          <!-- Right side: Weekly Grid View -->
+          <div class="calendar-grid-view">
+            <div class="cal-grid-header">
+              <div>จันทร์</div>
+              <div>อังคาร</div>
+              <div>พุธ</div>
+              <div>พฤหัสบดี</div>
+              <div>ศุกร์</div>
+              <div>เสาร์</div>
+              <div>อาทิตย์</div>
+            </div>
+            <div class="cal-grid-cells" id="calendar-days-cells">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 3: POPULATION ANALYTICS (C.1, C.2, C.3, C.4, C.5) ==================== -->
+      <section class="tab-panel" id="panel-analytics">
+        <div class="panel-header-section">
+          <h2>📈 ประมวลผลและสถิติภาพรวมของผู้ป่วยในระบบ (Cohort Population Analytics)</h2>
+          <p>เจาะลึกแนวโน้มสุขภาพของกลุ่มผู้ป่วยเป้าหมาย เพื่อประเมินประสิทธิภาพและผลลัพธ์ของโปรแกรมดูแลพฤติกรรมสะสม</p>
+        </div>
+
+        <!-- Cohort KPI Dashboard Widget (C.1) -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">จำนวนสมาชิกร่วมโปรแกรมสะสม</span>
+            <span class="kpi-value" id="kpi-total-patients">142 คน</span>
+            <span class="kpi-sub green">↑ เพิ่มขึ้น 12 คนสัปดาห์นี้</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Healthy Choice Score เฉลี่ยกลุ่ม</span>
+            <span class="kpi-value" id="kpi-avg-score">76.4 / 100</span>
+            <span class="kpi-sub green">↑ พัฒนาดีขึ้น +3.2 คะแนน</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">% ผู้ป่วยที่คุมแล็บ/ผลลัพธ์ดีขึ้น</span>
+            <span class="kpi-value" id="kpi-pct-improving">72.8%</span>
+            <span class="kpi-sub green">✓ ผ่านตามเป้าหมายของกองทุน</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">ปริมาณโซเดียมสะสมเฉลี่ยที่ลดได้</span>
+            <span class="kpi-value" id="kpi-sodium-reduc">360 mg/วัน</span>
+            <span class="kpi-sub green">↓ ลดลง 18% จากค่าดั้งเดิม</span>
+          </div>
+        </div>
+
+        <div class="analytics-grid">
+          
+          <!-- Geographic Heatmap Thailand Zip Codes (C.2) -->
+          <div class="dashboard-card" style="grid-column: span 3;">
+            <div class="card-title-row">
+              <span class="card-icon">🗺️</span>
+              <h3 class="card-title" id="map-chart-title">แผนที่พฤติกรรมสะสมโซเดียมและน้ำตาลเฉลี่ยตามเขตพื้นที่ (Thailand Regional Heatmap)</h3>
+            </div>
+            <div class="map-layout-container">
+              <div class="map-view" id="thailand-svg-map-container">
+                <!-- SVG Interactive Thailand Map populated here -->
+              </div>
+              <div class="map-sidebar-info">
+                <h4>สรุปหนาแน่นโภชนาการพื้นที่</h4>
+                <div class="map-legend-vertical">
+                  <div class="ml-item"><span class="ml-color" style="background:rgba(239, 68, 68, 0.85);"></span> 🔴 โซเดียมเกินเกณฑ์ >2,500mg (เสี่ยงสูง)</div>
+                  <div class="ml-item"><span class="ml-color" style="background:rgba(245, 158, 11, 0.85);"></span> 🟡 โซเดียมก้ำกึ่ง 1,500 - 2,500mg</div>
+                  <div class="ml-item"><span class="ml-color" style="background:rgba(16, 185, 129, 0.85);"></span> 🟢 ปลอดภัยได้มาตรฐาน <1,500mg</div>
+                </div>
+                <div class="region-stats-card" id="map-hover-region-card">
+                  <span class="r-title">จิ้มเลือกพื้นที่บนแผนที่</span>
+                  <div class="r-metrics">
+                    <div>โซเดียมเฉลี่ย: <span class="bold">—</span></div>
+                    <div>น้ำตาลเฉลี่ย: <span class="bold">—</span></div>
+                    <div>ระดับความเสี่ยง: <span class="bold">—</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trigger Food Analysis (C.3) -->
+          <div class="dashboard-card" style="grid-column: span 2;">
+            <div class="card-title-row">
+              <span class="card-icon">⚠️</span>
+              <h3 class="card-title">อาหารกระตุ้นอาการอันดับต้นๆ (Trigger Food Analysis)</h3>
+            </div>
+            <div class="trigger-foods-bar-list" id="trigger-foods-bars">
+              <!-- Dynamically rendered bars -->
+            </div>
+          </div>
+
+          <!-- Outcome Validation & Intervention Success Rate (C.4, C.5) -->
+          <div class="dashboard-card" style="grid-column: span 3;">
+            <div class="card-title-row">
+              <span class="card-icon">📈</span>
+              <h3 class="card-title">ประสิทธิภาพคำแนะนำเชิงพฤติกรรม (Intervention Success Rate)</h3>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>คำแนะนำเชิงพฤติกรรม (AI Intervention)</th>
+                    <th>ความนิยมเลือกทำ</th>
+                    <th>อัตราความสำเร็จลดโซเดียม/น้ำตาล</th>
+                    <th>ผลแล็บเฉลี่ยที่ลดลง</th>
+                    <th>ประสิทธิผลเฉลี่ย</th>
+                  </tr>
+                </thead>
+                <tbody id="intervention-table-body">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================== TAB 4: RESEARCH & PUBLIC HEALTH (D.1, D.2, D.3) ==================== -->
+      <section class="tab-panel" id="panel-research">
+        <div class="panel-header-section">
+          <h2>🔬 งานวิจัยและแบ่งปันข้อมูลสาธารณสุขนิรนาม (Research & Public Health Portal)</h2>
+          <p>เข้าถึงชุดข้อมูลนิรนามที่ได้รับความยินยอม (Opt-in) จากแอปพลิเคชันฝั่งผู้ใช้งานทั่วไปเพื่อนำไปศึกษาวิจัยเชิงโภชนาการป้องกันโรคระดับนโยบาย</p>
+        </div>
+
+        <div class="research-grid">
+          
+          <!-- Anonymous Data Summary (D.1) -->
+          <div class="dashboard-card">
+            <div class="card-title-row">
+              <span class="card-icon">🔒</span>
+              <h3 class="card-title">สถิติชุดข้อมูลแบ่งปันนิรนาม (Anonymous Dataset Statistics)</h3>
+            </div>
+            <div class="stats-large-row">
+              <div class="stats-item">
+                <span class="num" id="res-total-records">82,410 มื้อ</span>
+                <span class="lbl">ประวัติมื้ออาหารที่ได้รับสิทธิ์วิจัย</span>
+              </div>
+              <div class="stats-item">
+                <span class="num" id="res-optin-users">2,415 คน</span>
+                <span class="lbl">จำนวนบัญชีผู้ใช้งานกึ่งนิรนามที่ยินยอมเข้าร่วม</span>
+              </div>
+            </div>
+            <div style="font-size: 0.65rem; color: var(--text-secondary); background: var(--bg); padding: 8px; border-radius: 6px; border: 1px dashed var(--border); margin-top: 10px; line-height: 1.4;">
+              *หมายเหตุ: ข้อมูลทั้งหมดจะผ่านการทำกระบวนการ Anonymization เพื่อลบข้อมูลระบุตัวตนและเลขประจำตัวผู้ป่วยออกอย่างสมบูรณ์แบบก่อนนำเข้าระบบวิเคราะห์
+            </div>
+          </div>
+
+          <!-- Dataset Exporter Panel (D.2) -->
+          <div class="dashboard-card">
+            <div class="card-title-row">
+              <span class="card-icon">📥</span>
+              <h3 class="card-title">ศูนย์ดาวน์โหลดข้อมูลวิจัยโภชนาการแห่งชาติ (Research Exporter)</h3>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:0.68rem;">1. เลือกเงื่อนไขกรองกลุ่มข้อมูลเป้าหมาย</label>
+              <div style="display:flex; gap:8px;">
+                <select id="export-ncd-filter" class="filter-select" style="margin:0; flex:1;">
+                  <option value="all">โรคทั้งหมด (NCDs Collective)</option>
+                  <option value="diabetes">เฉพาะผู้ป่วยคุมเบาหวาน</option>
+                  <option value="hypertension">เฉพาะผู้ป่วยคุมความดันโลหิตสูง</option>
+                </select>
+                <select id="export-region-filter" class="filter-select" style="margin:0; flex:1;">
+                  <option value="all">ทั่วประเทศ (All regions)</option>
+                  <option value="bangkok">กรุงเทพมหานครและปริมณฑล</option>
+                  <option value="north">ภาคเหนือและรอยต่อ</option>
+                  <option value="northeast">ภาคตะวันออกเฉียงเหนือ</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:10px;">
+              <label class="form-label" style="font-size:0.68rem;">2. เลือกรูปแบบไฟล์ชุดข้อมูลนิรนาม</label>
+              <div style="display:flex; gap:8px;">
+                <button class="primary-btn" style="flex:1; margin:0; font-size:0.7rem;" onclick="simulateResearchExport('CSV')">ดาวน์โหลด Dataset (CSV) 📊</button>
+                <button class="primary-btn" style="flex:1; margin:0; font-size:0.7rem; background:#4f46e5; border-color:#4338ca;" onclick="simulateResearchExport('JSON')">ดาวน์โหลด Dataset (JSON) 📁</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Policy Insight Panel (D.3) -->
+          <div class="dashboard-card" style="grid-column: span 2;">
+            <div class="card-title-row">
+              <span class="card-icon">📢</span>
+              <h3 class="card-title">รายงานข้อมูลเตือนภัยเชิงนโยบาย (Policy Insight Alerts Report)</h3>
+            </div>
+            <div class="policy-alerts-list" id="policy-alerts-container">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ==================== POPUP: LAB LOGS INPUT FORM (B.3) ==================== -->
+  <div class="modal-overlay" id="lab-form-modal-overlay">
+    <div class="modal-card" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🧬 บันทึกผลแล็บและขนาดสัดส่วนทางคลินิก</h3>
+        <button class="modal-close-btn" onclick="toggleLabFormPopup(false)">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">วันที่ตรวจ / วัดค่า</label>
+          <input type="date" id="lab-input-date" class="form-input" value="2026-06-03">
+        </div>
+        
+        <!-- Field groups adapt dynamically depending on selected patient's active program -->
+        <div class="form-group">
+          <label class="form-label">น้ำหนักตัว (Weight - kg)</label>
+          <input type="number" step="0.1" id="lab-input-weight" class="form-input" placeholder="น้ำหนักตัวปัจจุบัน">
+        </div>
+        <div class="form-group">
+          <label class="form-label">รอบเอว (Waist - ซม.)</label>
+          <input type="number" id="lab-input-waist" class="form-input" placeholder="รอบเอว (ซม.)">
+        </div>
+        
+        <!-- Clinical only inputs (hidden in fitness mode) -->
+        <div class="form-group clinic-only-field">
+          <label class="form-label">ระดับน้ำตาลสะสมในเลือด (HbA1c - %)</label>
+          <input type="number" step="0.1" id="lab-input-hba1c" class="form-input" placeholder="ค่าเปอร์เซ็นต์น้ำตาลสะสม">
+        </div>
+        <div class="form-group clinic-only-field">
+          <label class="form-label">ความดันโลหิต (SYS/DIA - mmHg เช่น 135/85)</label>
+          <input type="text" id="lab-input-bp" class="form-input" placeholder="ค่าความดันโลหิต SYS/DIA">
+        </div>
+        <div class="form-group clinic-only-field">
+          <label class="form-label">ไขมันคอเลสเตอรอลรวม (LDL/Total - mg/dL)</label>
+          <input type="number" id="lab-input-chol" class="form-input" placeholder="คอเลสเตอรอลรวม">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="primary-btn" style="background:#475569; margin:0;" onclick="toggleLabFormPopup(false)">ยกเลิก</button>
+        <button class="primary-btn" style="margin:0;" onclick="saveNewLabMeasurement()">บันทึกข้อมูลสำเร็จ 💾</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== POPUP: PRINT PDF HEALTH REPORT MODAL (B.5) ==================== -->
+  <div class="modal-overlay" id="pdf-modal-overlay">
+    <div class="modal-card" style="max-width: 600px; height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3 class="modal-title">📄 ส่งออกรายงานวิเคราะห์ประวัติผู้ป่วย (Clinical PDF Report)</h3>
+        <button class="modal-close-btn" onclick="togglePdfModal(false)">✕</button>
+      </div>
+      
+      <!-- Selection of range -->
+      <div style="padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center;">
+        <span style="font-size:0.7rem; font-weight:700;">เลือกระยะเวลาย้อนหลัง:</span>
+        <select id="pdf-report-days" class="filter-select" style="margin:0; width:auto;" onchange="updatePdfReportData()">
+          <option value="30">รายงานประวัติย้อนหลัง 30 วัน</option>
+          <option value="90" selected>รายงานประวัติย้อนหลัง 90 วัน</option>
+          <option value="180">รายงานประวัติย้อนหลัง 180 วัน</option>
+        </select>
+        <button class="primary-btn" style="margin:0; padding:6px 12px; font-size:0.7rem;" onclick="triggerBrowserPrint()">พิมพ์รายงานออกเครื่องพิมพ์ 🖨️</button>
+      </div>
+
+      <!-- Printable area mimicking a physical page -->
+      <div class="modal-body" style="flex:1; overflow-y:auto; background: #525659; padding: 20px 0;">
+        <div class="pdf-page-mock" id="pdf-printable-area">
+          
+          <div class="pdf-logo-row">
+            <span class="p-logo">Nucistion Health Report</span>
+            <span class="p-sub" id="pdf-report-period-lbl">รายงานรอบ 90 วัน</span>
+          </div>
+          
+          <div class="pdf-divider"></div>
+          
+          <div class="pdf-section-title">ข้อมูลสมาชิก / ผู้ป่วย (Patient Demographics)</div>
+          <div class="pdf-info-grid">
+            <div><strong>ชื่อ-นามสกุล:</strong> <span id="pdf-p-name">คุณป้าสมใจ รักสุขภาพ</span></div>
+            <div><strong>ระดับความเสี่ยง:</strong> <span id="pdf-p-risk">เสี่ยงสูง (High Risk)</span></div>
+            <div><strong>โปรแกรมการรักษา:</strong> <span id="pdf-p-prog">เบาหวาน (Diabetes Program)</span></div>
+            <div><strong>น้ำหนักปัจจุบัน:</strong> <span id="pdf-p-weight">82.0 kg</span></div>
+            <div><strong>รอบเอวล่าสุด:</strong> <span id="pdf-p-waist">94 cm</span></div>
+            <div><strong>ส่วนสูง:</strong> <span id="pdf-p-height">158 ซม.</span></div>
+          </div>
+          
+          <div class="pdf-section-title" style="margin-top: 15px;">บทวินิจฉัยและข้อเสนอแนะโดยแพทย์ AI (AI Clinical Diagnostic Report)</div>
+          <div class="pdf-ai-summary-block" id="pdf-ai-bullets-list">
+            <!-- Loaded dynamically -->
+          </div>
+
+          <div class="pdf-section-title" style="margin-top: 15px;">สรุปพฤติกรรมโภชนาการเฉลี่ย เทียบกับเกณฑ์มาตรฐานความปลอดภัยแพทย์ (WHO Target)</div>
+          <table class="pdf-table">
+            <thead>
+              <tr>
+                <th>ประเภทสารอาหาร</th>
+                <th>ปริมาณทานเฉลี่ยต่อวัน</th>
+                <th>เกณฑ์จำกัดสูงสุด (WHO Limit)</th>
+                <th>การเปรียบเทียบเชิงวิเคราะห์</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>🧂 โซเดียมสะสม (Sodium)</td>
+                <td id="pdf-nut-sodium">1,950 mg</td>
+                <td>&lt; 2,000 mg</td>
+                <td id="pdf-eval-sodium" class="green-txt">✓ ปลอดภัยตามเกณฑ์</td>
+              </tr>
+              <tr>
+                <td>🍬 น้ำตาลสะสม (Sugar)</td>
+                <td id="pdf-nut-sugar">38 g</td>
+                <td>&lt; 25 g</td>
+                <td id="pdf-eval-sugar" class="red-txt">⚠️ เกินเป้าหมายจำกัด NCDs (+52%)</td>
+              </tr>
+              <tr>
+                <td>🔥 พลังงานแคลอรี (Calories)</td>
+                <td id="pdf-nut-calories">1,420 kcal</td>
+                <td>1,500 kcal</td>
+                <td id="pdf-eval-calories" class="green-txt">✓ สมดุลกับค่าเผาผลาญ</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pdf-section-title" style="margin-top: 15px;">ประวัติตัวชี้วัดการประเมินทางคลินิก (Clinical Marker Progress Log)</div>
+          <table class="pdf-table">
+            <thead>
+              <tr id="pdf-table-headers">
+                <th>วันที่ตรวจวัด</th>
+                <th>HbA1c (%)</th>
+                <th>ความดัน SYS/DIA (mmHg)</th>
+                <th>คอเลสเตอรอล (mg/dL)</th>
+                <th>น้ำหนัก (kg)</th>
+              </tr>
+            </thead>
+            <tbody id="pdf-lab-table-body">
+              <!-- Loaded dynamically -->
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 25px; display:flex; justify-content:space-between; font-size:0.6rem; color:#6b7280; border-top:1px solid #e5e7eb; padding-top:6px;">
+            <span>เอกสารนี้สร้างโดยคอมพิวเตอร์ผ่านระบบวิเคราะห์ AI ของ Nucistion Clinical Portal</span>
+            <span>ลงนาม: ______________________________ (แพทย์ผู้ดูแล)</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="b2b_app.js"></script>
+</body>
+</html>
