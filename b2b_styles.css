@@ -949,7 +949,7 @@ input, select, button {
   color: var(--text-secondary);
 }
 
-.calendar-days-cells {
+.cal-grid-cells {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-auto-rows: 1fr;
