@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nucistion — กินดี รู้ทัน สุขภาพดีขึ้นจริง</title>
+  <meta name="description" content="Nucistion Mobile Prototype — Thai health and nutrition mobile app prototype.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=1.0.2">
+</head>
+<body>
+
+  <!-- App Sandbox containing the Phone Simulator and Developer Control Sidebar -->
+  <div class="app-sandbox">
+
+    <!-- ========================================== -->
+    <!-- 📱 PHONE FRAME SIMULATOR -->
+    <!-- ========================================== -->
+    <div class="phone-frame">
+      <div class="phone-inner">
+        
+        <!-- Status Bar notch details -->
+        <div class="phone-notch"></div>
+        <div class="phone-status-bar">
+          <span class="time" id="status-time">10:03</span>
+          <div class="status-right">
+            <span>📶</span>
+            <span>🔋 95%</span>
+          </div>
+        </div>
+
+        <!-- Offline Mode Banner -->
+        <div class="offline-banner" id="app-offline-banner" style="display: none;">
+          📴 ออฟไลน์อยู่: ใช้ฐานข้อมูลในเครื่องชั่วคราว ข้อมูลจะถูกซิงก์เมื่อกลับมาเชื่อมต่อ
+        </div>
+
+        <!-- Floating Simulation Notification Bar -->
+        <div class="floating-notif-banner" id="notif-banner" onclick="dismissNotifBanner()">
+          <span class="floating-notif-icon" id="notif-icon">🍽️</span>
+          <div class="floating-notif-content">
+            <div class="floating-notif-title" id="notif-title">แจ้งเตือนบันทึกมื้ออาหาร</div>
+            <div class="floating-notif-text" id="notif-text">ถึงเวลามื้อเที่ยงแล้ว อย่าลืมบันทึกนะ</div>
+          </div>
+        </div>
+
+        <!-- Phone screens container -->
+        <div class="phone-screens">
+
+          <!-- ==================== ONBOARDING STEP 1 ==================== -->
+          <div class="screen active" id="onb-1">
+            <div class="welcome-container">
+              <div class="welcome-logo-area">
+                <div class="welcome-logo">Nuci<span>stion</span></div>
+                <div class="welcome-tagline">กินดี รู้ทัน สุขภาพดีขึ้นจริง</div>
+              </div>
+              <div class="welcome-illust">🥗💚</div>
+              <div class="btn-container" style="width: 100%; padding: 0;">
+                <button class="primary-btn" onclick="nextOnboardingStep(2)">เริ่มต้นใช้งาน</button>
+                <a href="#" class="secondary-link" onclick="bypassOnboarding()">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== ONBOARDING STEP 2 ==================== -->
+          <div class="screen" id="onb-2">
+            <div class="onboarding-progress-container">
+              <div class="onboarding-progress-bar">
+                <div class="onboarding-progress-fill" style="width: 33.3%"></div>
+              </div>
+              <span class="onboarding-step-label">ขั้นตอนที่ 2 จาก 6: ข้อมูลเบื้องต้น</span>
+            </div>
+            
+            <div class="section-title">ข้อมูลสัดส่วนของคุณ</div>
+            
+            <div class="form-group">
+              <label class="form-label">ชื่อเล่นของคุณ</label>
+              <input type="text" class="form-input" id="input-name" placeholder="ระบุชื่อของคุณ" value="สมใจ">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">อายุ (ปี)</label>
+              <input type="number" class="form-input" id="input-age" placeholder="ระบุอายุ" value="58">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">เพศ</label>
+              <div class="gender-select">
+                <button class="gender-btn" id="g-male" onclick="setGender('ชาย')">ชาย</button>
+                <button class="gender-btn active" id="g-female" onclick="setGender('หญิง')">หญิง</button>
+                <button class="gender-btn" id="g-none" onclick="setGender('ไม่ระบุ')">ไม่ระบุ</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="input-row">
+                <div style="flex: 1;">
+                  <label class="form-label">น้ำหนัก (กิโลกรัม)</label>
+                  <input type="number" class="form-input" id="input-weight" placeholder="เช่น 65" value="82" oninput="calculateBMI()">
+                </div>
+                <div style="flex: 1;">
+                  <label class="form-label">ส่วนสูง (เซนติเมตร)</label>
+                  <input type="number" class="form-input" id="input-height" placeholder="เช่น 160" value="158" oninput="calculateBMI()">
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic auto-calculated BMI details widget -->
+            <div class="bmi-widget">
+              <div class="bmi-left">
+                <span class="bmi-title">ดัชนีมวลกาย (BMI) ของคุณ</span>
+                <span class="bmi-value" id="bmi-val">32.8</span>
+                <div>
+                  <span class="bmi-badge red" id="bmi-badge">โรคอ้วน</span>
+                </div>
+              </div>
+              <div class="bmi-calories">
+                <span class="calories-title">พลังงานแนะนำต่อวัน</span>
+                <div class="calories-val" id="recommended-calories">1,600 kcal</div>
+              </div>
+            </div>
+
+            <div class="btn-container">
+              <button class="primary-btn" onclick="nextOnboardingStep(3)">ถัดไป</button>
+            </div>
+          </div>
+
+          <!-- ==================== ONBOARDING STEP 3 (NEW) ==================== -->
+          <div class="screen" id="onb-3">
+            <div class="onboarding-progress-container">
+              <div class="onboarding-progress-bar">
+                <div class="onboarding-progress-fill" style="width: 50%"></div>
+              </div>
+              <span class="onboarding-step-label">ขั้นตอนที่ 3 จาก 6: องค์ประกอบร่างกาย</span>
+            </div>
+
+            <div class="section-title">ประมาณการไขมันสะสม (Body Fat %)</div>
+            <p style="font-size: 0.68rem; color: var(--text-secondary); margin: -4px 0 12px; line-height: 1.4; padding: 0 4px;">
+              สัดส่วนไขมันสะสมในร่างกายจะช่วยคำนวณเป้าหมายโปรตีนและสารอาหารได้แม่นยำยิ่งขึ้น เลือกวิธีประมาณการจากเครื่องมือด้านล่างนี้ได้เลยค่ะ
+            </p>
+
+            <div style="background: var(--surface); padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); margin: 0 4px;">
+              <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                <span>🧬 การคำนวณองค์ประกอบร่างกาย</span>
+                <select class="form-input" id="onb-body-comp-goal" onchange="syncOnbGoalToMain(this.value)" style="width: auto; padding: 2px 6px; font-size: 0.65rem; height: auto; border-radius: 8px; margin: 0; border: 1px solid var(--border);">
+                  <option value="recomp">Recomp (เพิ่มกล้าม+ลดไขมัน)</option>
+                  <option value="bulk">Bulk (เพิ่มกล้ามเนื้อ)</option>
+                  <option value="cut">Cut (ลดไขมันรักษากล้าม)</option>
+                  <option value="gain">เพิ่มน้ำหนัก (เพิ่มน้ำหนักตัว)</option>
+                  <option value="none">ไม่มี (รักษาน้ำหนักตัว)</option>
+                </select>
+              </div>
+
+              <!-- 3-Way Selector Method Tabs (Onboarding duplicate) -->
+              <div style="display: flex; background: var(--bg); border-radius: 8px; padding: 2px; border: 1px solid var(--border); margin-bottom: 10px;">
+                <button id="onb-bf-method-btn-manual" onclick="switchOnbBfMethod('manual')" style="flex: 1; padding: 5px 2px; font-size: 0.62rem; border: none; background: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer; border-radius: 6px; font-weight: 700; color: var(--primary-dark); transition: all 0.2s;">✍️ กรอกเอง</button>
+                <button id="onb-bf-method-btn-visual" onclick="switchOnbBfMethod('visual')" style="flex: 1; padding: 5px 2px; font-size: 0.62rem; border: none; background: transparent; cursor: pointer; border-radius: 6px; font-weight: 600; color: var(--text-muted); transition: all 0.2s;">👤 เลือกรูปร่าง</button>
+                <button id="onb-bf-method-btn-navy" onclick="switchOnbBfMethod('navy')" style="flex: 1; padding: 5px 2px; font-size: 0.62rem; border: none; background: transparent; cursor: pointer; border-radius: 6px; font-weight: 600; color: var(--text-muted); transition: all 0.2s;">📏 สายวัด (Navy)</button>
+              </div>
+
+              <!-- Panel 1: Manual Input -->
+              <div id="onb-bf-panel-manual" style="margin-bottom: 10px;">
+                <div style="display: flex; gap: 8px; align-items: flex-end;">
+                  <div style="flex: 1;">
+                    <label style="font-size: 0.62rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 2px;">เปอร์เซ็นต์ไขมัน (% Body Fat)</label>
+                    <input type="number" class="form-input" id="onb-input-body-fat" placeholder="ระบุ % เช่น 28" value="32" oninput="calculateOnbBodyComp()" style="padding: 4px 8px; font-size: 0.72rem; height: 30px; margin: 0; width: 100%;">
+                  </div>
+                </div>
+                <span style="font-size: 0.58rem; color: var(--text-muted); display: block; margin-top: 4px;">*พิมพ์ % ไขมัน เพื่อประเมินผลลัพธ์มวลไร้ไขมันของคุณ</span>
+              </div>
+
+              <!-- Panel 2: Visual Selector -->
+              <div id="onb-bf-panel-visual" style="display: none; margin-bottom: 10px;">
+                <label style="font-size: 0.62rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">แตะเลือกรูปร่างปัจจุบันที่ตรงกับคุณมากที่สุด:</label>
+                <div style="display: flex; flex-direction: column; gap: 4px;" id="onb-visual-options-container">
+                  <!-- Loaded dynamically based on gender -->
+                </div>
+              </div>
+
+              <!-- Panel 3: Navy Circumference Formula -->
+              <div id="onb-bf-panel-navy" style="display: none; margin-bottom: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                  <div>
+                    <label style="font-size: 0.58rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 1px;">รอบคอ (ซม.)</label>
+                    <input type="number" class="form-input" id="onb-navy-neck" value="38" style="padding: 4px 6px; font-size: 0.7rem; height: 26px; margin: 0; width: 100%;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.58rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 1px;">รอบเอว (ซม.)</label>
+                    <input type="number" class="form-input" id="onb-navy-waist" value="94" style="padding: 4px 6px; font-size: 0.7rem; height: 26px; margin: 0; width: 100%;">
+                  </div>
+                  <div id="onb-navy-hip-container" style="display: none; grid-column: span 2;">
+                    <label style="font-size: 0.58rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 1px;">รอบสะโพก (ซม.) *เฉพาะผู้หญิง</label>
+                    <input type="number" class="form-input" id="onb-navy-hip" value="108" style="padding: 4px 6px; font-size: 0.7rem; height: 26px; margin: 0; width: 100%;">
+                  </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.6rem; color: var(--text-secondary); margin-bottom: 6px; background: var(--bg); padding: 4px 6px; border-radius: 4px;">
+                  <span>ส่วนสูงของคุณ (จากขั้นตอนที่ 2):</span>
+                  <span style="font-weight: 700;" id="onb-navy-height-lbl">158 ซม.</span>
+                </div>
+                <button class="primary-btn" onclick="calculateOnbNavyBf()" style="padding: 6px; font-size: 0.68rem; font-weight: 700; width: 100%; border-radius: 8px;">คำนวณผลจากสูตรราชนาวี 📐</button>
+              </div>
+
+              <!-- Output Mass Card -->
+              <div class="before-after-grid" style="grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+                <div class="ba-card" style="padding: 6px 8px; background: var(--bg);">
+                  <span class="ba-lbl" style="font-size: 0.58rem;">Lean Mass (มวลไร้ไขมัน)</span>
+                  <div style="margin: 2px 0;">
+                    <span id="onb-lean-mass" style="font-size: 0.85rem; font-weight: 700; color: var(--primary-dark);">55.8 kg</span>
+                  </div>
+                </div>
+                <div class="ba-card" style="padding: 6px 8px; background: var(--bg);">
+                  <span class="ba-lbl" style="font-size: 0.58rem;">Fat Mass (มวลไขมันรวม)</span>
+                  <div style="margin: 2px 0;">
+                    <span id="onb-fat-mass" style="font-size: 0.85rem; font-weight: 700; color: var(--danger);">26.2 kg</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-container">
+              <button class="primary-btn" onclick="nextOnboardingStep(4)">ถัดไป</button>
+            </div>
+          </div>
+
+          <!-- ==================== ONBOARDING STEP 4 (OLD 3) ==================== -->
+          <div class="screen" id="onb-4">
+            <div class="onboarding-progress-container">
+              <div class="onboarding-progress-bar">
+                <div class="onboarding-progress-fill" style="width: 66.6%"></div>
+              </div>
+              <span class="onboarding-step-label">ขั้นตอนที่ 4 จาก 6: เลือกเป้าหมายและภาวะสุขภาพ</span>
+            </div>
+
+            <div class="section-title">SECTION A: ฉันเป็นคนทั่วไป ต้องการ...</div>
+            <div class="preset-cards" id="general-presets">
+              <div class="preset-card" id="card-weight-loss" onclick="togglePreset('weight-loss')">
+                <div class="preset-icon">🏃</div>
+                <div class="preset-info">
+                  <div class="preset-name">ลดน้ำหนัก</div>
+                  <div class="preset-desc">ลดแคลอรีและไขมัน เพื่อน้ำหนักที่ดีขึ้น</div>
+                </div>
+              </div>
+              <div class="preset-card" id="card-muscle" onclick="togglePreset('muscle')">
+                <div class="preset-icon">💪</div>
+                <div class="preset-info">
+                  <div class="preset-name">เพิ่มกล้ามเนื้อ</div>
+                  <div class="preset-desc">เพิ่มโปรตีนและ Macro ที่เหมาะกับการออกกำลังกาย</div>
+                </div>
+              </div>
+              <div class="preset-card" id="card-healthy" onclick="togglePreset('healthy')">
+                <div class="preset-icon">🥗</div>
+                <div class="preset-info">
+                  <div class="preset-name">กินสุขภาพดีขึ้น</div>
+                  <div class="preset-desc">ปรับพฤติกรรมการกินทั่วไป ไม่มีโรคเฉพาะ</div>
+                </div>
+              </div>
+              <div class="preset-card" id="card-energy" onclick="togglePreset('energy')">
+                <div class="preset-icon">⚡</div>
+                <div class="preset-info">
+                  <div class="preset-name">เพิ่มพลังงาน</div>
+                  <div class="preset-desc">กินอาหารที่ให้พลังงานสม่ำเสมอตลอดวัน</div>
+                </div>
+              </div>
+              <div class="preset-card" id="card-mindful" onclick="togglePreset('mindful')">
+                <div class="preset-icon">🧘</div>
+                <div class="preset-info">
+                  <div class="preset-name">ลดความเครียดจากการกิน</div>
+                  <div class="preset-desc">ไม่นับแคลอรีเคร่งครัด เน้น Mindful Eating</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-title">SECTION B: ฉันมีโรคประจำตัว ต้องการดูแล...</div>
+            <div class="preset-cards" id="ncd-presets">
+              <div class="preset-card active" id="card-ncd-diabetes" onclick="togglePreset('ncd-diabetes')">
+                <div class="preset-icon">🩸</div>
+                <div class="preset-info">
+                  <div class="preset-name">โรคเบาหวาน (Type 2)</div>
+                  <div class="preset-desc">ควบคุมน้ำตาลและคาร์โบไฮเดรต ค่า target อิงจาก WHO</div>
+                  <span class="ncd-badge-tag">NCD Program • เบาหวาน</span>
+                </div>
+              </div>
+              <div class="preset-card" id="card-ncd-bp" onclick="togglePreset('ncd-bp')">
+                <div class="preset-icon">💊</div>
+                <div class="preset-info">
+                  <div class="preset-name">ความดันโลหิตสูง</div>
+                  <div class="preset-desc">ลดโซเดียม เพิ่มโพแทสเซียม ตาม DASH Diet</div>
+                  <span class="ncd-badge-tag">NCD Program • ความดัน</span>
+                </div>
+              </div>
+              <div class="preset-card" id="card-ncd-cholesterol" onclick="togglePreset('ncd-cholesterol')">
+                <div class="preset-icon">🫀</div>
+                <div class="preset-info">
+                  <div class="preset-name">ไขมันในเลือดสูง</div>
+                  <div class="preset-desc">ลดไขมันอิ่มตัว เพิ่มไขมันดี ลด LDL</div>
+                  <span class="ncd-badge-tag">NCD Program • ไขมัน</span>
+                </div>
+              </div>
+              <div class="preset-card" id="card-ncd-obesity" onclick="togglePreset('ncd-obesity')">
+                <div class="preset-icon">⚖️</div>
+                <div class="preset-info">
+                  <div class="preset-name">โรคอ้วน (BMI > 30)</div>
+                  <div class="preset-desc">โปรแกรมลดน้ำหนักเข้มข้น ดูแลทั้งแคลอรีและโภชนาการ</div>
+                  <span class="ncd-badge-tag">NCD Program • โรคอ้วน</span>
+                </div>
+              </div>
+              <div class="preset-card" id="card-ncd-multi" onclick="togglePreset('ncd-multi')">
+                <div class="preset-icon">🔴</div>
+                <div class="preset-info">
+                  <div class="preset-name">มีหลายโรคพร้อมกัน</div>
+                  <div class="preset-desc">ปรับ target ให้ครอบคลุมทุกโรคที่มี</div>
+                  <span class="ncd-badge-tag">NCD Program • หลายโรค</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-container">
+              <button class="primary-btn" onclick="nextOnboardingStep(5)">ถัดไป</button>
+            </div>
+          </div>
+
+          <!-- ==================== ONBOARDING STEP 5 (OLD 4) ==================== -->
+          <div class="screen" id="onb-5">
+            <div class="onboarding-progress-container">
+              <div class="onboarding-progress-bar">
+                <div class="onboarding-progress-fill" style="width: 83.3%"></div>
+              </div>
+              <span class="onboarding-step-label">ขั้นตอนที่ 5 จาก 6: เป้าหมายทางโภชนาการประจำวัน</span>
+            </div>
+
+            <div class="section-title">เป้าหมายของคุณที่ระบบวิเคราะห์ไว้</div>
+            
+            <div class="target-preview-grid" id="target-preview-list">
+              <!-- Calorie -->
+              <div class="target-card">
+                <span class="target-card-icon">🔥</span>
+                <span class="target-card-label">พลังงานพลังงานที่ควรได้รับ</span>
+                <span class="target-card-val" id="prev-val-calories">1,600 kcal</span>
+              </div>
+              <!-- Sugar -->
+              <div class="target-card">
+                <span class="target-card-icon">🍬</span>
+                <span class="target-card-label">เป้าหมายน้ำตาล</span>
+                <span class="target-card-val" id="prev-val-sugar">&lt; 25 g</span>
+                <span class="target-card-limit" id="prev-lbl-sugar">NCD Limit • เบาหวาน</span>
+              </div>
+              <!-- Carb -->
+              <div class="target-card">
+                <span class="target-card-icon">🍚</span>
+                <span class="target-card-label">เป้าหมายคาร์โบไฮเดรต</span>
+                <span class="target-card-val" id="prev-val-carb">&lt; 130 g</span>
+              </div>
+              <!-- Sodium -->
+              <div class="target-card">
+                <span class="target-card-icon">🧂</span>
+                <span class="target-card-label">เป้าหมายโซเดียม</span>
+                <span class="target-card-val" id="prev-val-sodium">&lt; 2,000 mg</span>
+              </div>
+              <!-- Protein -->
+              <div class="target-card">
+                <span class="target-card-icon">🥩</span>
+                <span class="target-card-label">เป้าหมายโปรตีน</span>
+                <span class="target-card-val" id="prev-val-protein">&gt; 70 g</span>
+              </div>
+              <!-- Fat -->
+              <div class="target-card">
+                <span class="target-card-icon">🥑</span>
+                <span class="target-card-label">เป้าหมายไขมัน</span>
+                <span class="target-card-val" id="prev-val-fat">&lt; 50 g</span>
+              </div>
+            </div>
+
+            <span class="subtitle-center">ปรับได้ภายหลังในการตั้งค่าในโปรไฟล์</span>
+
+            <div class="btn-container">
+              <button class="primary-btn" onclick="nextOnboardingStep(6)">ถัดไป</button>
+            </div>
+          </div>
+
+          <!-- ==================== ONBOARDING STEP 6 (OLD 5) ==================== -->
+          <div class="screen" id="onb-6">
+            <div class="onboarding-progress-container">
+              <div class="onboarding-progress-bar">
+                <div class="onboarding-progress-fill" style="width: 100%"></div>
+              </div>
+              <span class="onboarding-step-label">ขั้นตอนที่ 6 จาก 6: แจ้งเตือน & การเชื่อมต่อ</span>
+            </div>
+
+            <div class="setup-group">
+              <div class="setup-title">⏰ ให้แจ้งเตือนบันทึกมื้ออาหารกี่โมง?</div>
+              <div class="time-slots">
+                <div class="time-slot-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="enable-breakfast" checked onchange="toggleMealReminder('breakfast', this.checked)" style="width: 16px; height: 16px; margin: 0; cursor: pointer; accent-color: var(--primary);">
+                    <span class="time-slot-label" id="lbl-breakfast">🌅 มื้อเช้า</span>
+                  </div>
+                  <input type="text" class="time-slot-input" id="alert-breakfast" value="08:00" placeholder="08:00" maxlength="5" oninput="formatTimeInput(this)" onblur="validateAndCleanTimeInput(this)" style="margin: 0; width: 75px; text-align: center;">
+                </div>
+                <div class="time-slot-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="enable-lunch" checked onchange="toggleMealReminder('lunch', this.checked)" style="width: 16px; height: 16px; margin: 0; cursor: pointer; accent-color: var(--primary);">
+                    <span class="time-slot-label" id="lbl-lunch">☀️ มื้อเที่ยง</span>
+                  </div>
+                  <input type="text" class="time-slot-input" id="alert-lunch" value="12:30" placeholder="12:30" maxlength="5" oninput="formatTimeInput(this)" onblur="validateAndCleanTimeInput(this)" style="margin: 0; width: 75px; text-align: center;">
+                </div>
+                <div class="time-slot-row" style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="enable-dinner" checked onchange="toggleMealReminder('dinner', this.checked)" style="width: 16px; height: 16px; margin: 0; cursor: pointer; accent-color: var(--primary);">
+                    <span class="time-slot-label" id="lbl-dinner">🌙 มื้อเย็น</span>
+                  </div>
+                  <input type="text" class="time-slot-input" id="alert-dinner" value="18:30" placeholder="18:30" maxlength="5" oninput="formatTimeInput(this)" onblur="validateAndCleanTimeInput(this)" style="margin: 0; width: 75px; text-align: center;">
+                </div>
+              </div>
+            </div>
+
+            <div class="setup-group">
+              <div class="setup-title">🔌 เชื่อมต่อข้อมูลภายนอก</div>
+              
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <span class="toggle-label">เชื่อมต่อ Google Fit / Apple Health</span>
+                  <span class="toggle-desc">เพื่อนำเข้าจำนวนก้าวและข้อมูลการเผาผลาญประจำวัน</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="link-health" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row" style="opacity: 0.55; cursor: not-allowed; pointer-events: none;">
+                <div class="toggle-info">
+                  <span class="toggle-label" style="color: var(--text-muted);">เชื่อมต่อนัดหมายแพทย์</span>
+                  <span class="toggle-desc">เพื่อแบ่งปันข้อมูลและรายงานบันทึกอาหารให้แพทย์เข้าถึง</span>
+                  <span style="font-size: 0.58rem; color: #9CA3AF; display: block; margin-top: 2px; font-weight: 600;">🔒 ระบบยังไม่เปิดใช้งาน (เร็วๆ นี้)</span>
+                </div>
+                <label class="switch" style="cursor: not-allowed;">
+                  <input type="checkbox" id="link-doctor" disabled>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <span class="toggle-label">เชื่อมต่อปฏิทิน (Google Calendar / iCal)</span>
+                  <span class="toggle-desc">เพื่อซิงก์เวลานัดออกกำลังกาย วิ่ง หรือสอบ/ประชุม อัตโนมัติ</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="link-calendar" checked onchange="toggleCalendarSync(this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="btn-container">
+              <button class="primary-btn" onclick="startApp()">เริ่มใช้งาน Nucistion</button>
+            </div>
+          </div>
+
+          <!-- ==================== MAIN TAB 1: HOME ==================== -->
+          <div class="screen" id="main-tab-home">
+            <div class="home-top-bar">
+              <div class="user-greeting">
+                <span class="hi">สวัสดี 👋</span>
+                <span class="name" id="home-user-name">คุณสมใจ</span>
+              </div>
+              <div class="home-top-actions">
+                <div class="streak-pill" id="home-streak-badge">
+                  <span>🔥</span> <span id="home-streak-val">7</span> วัน
+                </div>
+                <div class="notif-bell" onclick="simulateFloatingNotification(1)">
+                  <span>🔔</span>
+                  <div class="notif-bell-badge"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Synced Steps & Calories Burned Widget (Google Fit / Apple Health) -->
+            <div class="sync-steps-widget" id="health-sync-widget" style="display: none;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.3rem;">🏃</span>
+                <div>
+                  <div style="font-size:0.75rem; font-weight:700;" id="health-steps">🚶 8,420 ก้าว</div>
+                  <div style="font-size:0.58rem; color:var(--text-secondary);">ดึงข้อมูลจาก Google Fit วันนี้</div>
+                </div>
+              </div>
+              <div style="font-size:0.85rem; font-weight:800; color:#1D9E75;" id="health-burn">🔥 340 kcal</div>
+            </div>
+
+            <div id="home-normal-view">
+              <!-- SVG Multi concentric rings center component -->
+            <div class="nutrition-ring-container">
+              <svg class="nested-svg-rings" viewBox="0 0 200 200">
+                <!-- Concentric ring 1: Calories (r=85, circ=534) -->
+                <circle class="svg-ring-bg" cx="100" cy="100" r="85"></circle>
+                <circle class="svg-ring-fill" id="ring-cals" cx="100" cy="100" r="85" stroke="#1D9E75" stroke-dasharray="534" stroke-dashoffset="267"></circle>
+
+                <!-- Concentric ring 2: Protein (r=74, circ=465) -->
+                <circle class="svg-ring-bg" cx="100" cy="100" r="74"></circle>
+                <circle class="svg-ring-fill" id="ring-protein" cx="100" cy="100" r="74" stroke="#3B82F6" stroke-dasharray="465" stroke-dashoffset="180"></circle>
+
+                <!-- Concentric ring 3: Carb (r=63, circ=396) -->
+                <circle class="svg-ring-bg" cx="100" cy="100" r="63"></circle>
+                <circle class="svg-ring-fill" id="ring-carb" cx="100" cy="100" r="63" stroke="#FBBF24" stroke-dasharray="396" stroke-dashoffset="100"></circle>
+
+                <!-- Concentric ring 4: Fat (r=52, circ=327) -->
+                <circle class="svg-ring-bg" cx="100" cy="100" r="52"></circle>
+                <circle class="svg-ring-fill" id="ring-fat" cx="100" cy="100" r="52" stroke="#EC4899" stroke-dasharray="327" stroke-dashoffset="80"></circle>
+
+                <!-- Concentric ring 5: Sodium (r=41, circ=258) -->
+                <circle class="svg-ring-bg" cx="100" cy="100" r="41"></circle>
+                <circle class="svg-ring-fill" id="ring-sodium" cx="100" cy="100" r="41" stroke="#F97316" stroke-dasharray="258" stroke-dashoffset="193"></circle>
+
+                <!-- Concentric ring 6: Sugar (r=30, circ=188) -->
+                <circle class="svg-ring-bg" cx="100" cy="100" r="30"></circle>
+                <circle class="svg-ring-fill" id="ring-sugar" cx="100" cy="100" r="30" stroke="#EF4444" stroke-dasharray="188" stroke-dashoffset="140"></circle>
+              </svg>
+              <div class="ring-center-text">
+                <span class="ring-center-label">เหลือพลังงาน</span>
+                <span class="ring-center-val" id="home-rem-calories">820</span>
+                <span class="ring-center-unit">kcal</span>
+              </div>
+            </div>
+
+            <!-- Ring details indicators -->
+            <div class="home-nutrient-grid">
+              <div class="home-nutrient-micro" id="card-micro-cal">
+                <div class="micro-header">
+                  <span class="micro-dot" style="background:#1D9E75;"></span>
+                  <span class="micro-name">พลังงาน</span>
+                </div>
+                <div class="micro-val"><span id="lbl-cal-curr">780</span> <span class="micro-max">/ <span id="lbl-cal-max">1600</span> kcal</span></div>
+              </div>
+              <div class="home-nutrient-micro" id="card-micro-protein">
+                <div class="micro-header">
+                  <span class="micro-dot" style="background:#3B82F6;"></span>
+                  <span class="micro-name">โปรตีน</span>
+                </div>
+                <div class="micro-val"><span id="lbl-protein-curr">45</span> <span class="micro-max">/ <span id="lbl-protein-max">70</span> g</span></div>
+              </div>
+              <div class="home-nutrient-micro" id="card-micro-carb">
+                <div class="micro-header">
+                  <span class="micro-dot" style="background:#FBBF24;"></span>
+                  <span class="micro-name">คาร์บ</span>
+                </div>
+                <div class="micro-val"><span id="lbl-carb-curr">95</span> <span class="micro-max">/ <span id="lbl-carb-max">130</span> g</span></div>
+              </div>
+              <div class="home-nutrient-micro" id="card-micro-fat">
+                <div class="micro-header">
+                  <span class="micro-dot" style="background:#EC4899;"></span>
+                  <span class="micro-name">ไขมัน</span>
+                </div>
+                <div class="micro-val"><span id="lbl-fat-curr">25</span> <span class="micro-max">/ <span id="lbl-fat-max">50</span> g</span></div>
+              </div>
+              <div class="home-nutrient-micro" id="card-micro-sodium">
+                <div class="micro-header">
+                  <span class="micro-dot" style="background:#F97316;"></span>
+                  <span class="micro-name">โซเดียม</span>
+                </div>
+                <div class="micro-val"><span id="lbl-sodium-curr">1,490</span> <span class="micro-max">/ <span id="lbl-sodium-max">2000</span> mg</span></div>
+              </div>
+              <div class="home-nutrient-micro" id="card-micro-sugar">
+                <div class="micro-header">
+                  <span class="micro-dot" style="background:#EF4444;"></span>
+                  <span class="micro-name">น้ำตาล</span>
+                </div>
+                <div class="micro-val"><span id="lbl-sugar-curr">42</span> <span class="micro-max">/ <span id="lbl-sugar-max">25</span> g</span></div>
+              </div>
+            </div>
+
+            <!-- Meal Quality Score Card -->
+            <div class="dashboard-card" onclick="openMealQualityModal()" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div class="score-widget">
+                <div class="score-circle amber" id="score-circle">58</div>
+                <div class="score-details">
+                  <span class="score-lbl">คะแนนคุณภาพมื้ออาหารวันนี้ 🔍 (กดดูรายละเอียด)</span>
+                  <div class="score-badge-text amber" id="score-badge-text">พอใช้</div>
+                  <div class="score-tip" id="score-tip-text">มื้อกลางวันน้ำตาลค่อนข้างสูง มื้อเย็นลองเน้นทานผักผลไม้นะคะ 🥦</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Today's Meal Log -->
+            <div class="meal-list-header">บันทึกอาหารวันนี้</div>
+            <div class="meal-rows">
+              <!-- Morning -->
+              <div class="meal-log-row">
+                <div class="meal-row-left">
+                  <span class="meal-row-icon">🌅</span>
+                  <div class="meal-row-info">
+                    <span class="meal-row-title">มื้อเช้า</span>
+                    <span class="meal-row-desc" id="row-desc-morning">ข้าวต้มปลาทองเก๊า + ไข่ต้ม</span>
+                  </div>
+                </div>
+                <div class="meal-row-calories" id="row-cal-morning">280 kcal</div>
+              </div>
+              <!-- Lunch -->
+              <div class="meal-log-row" id="lunch-row-container">
+                <div class="meal-row-left">
+                  <span class="meal-row-icon">☀️</span>
+                  <div class="meal-row-info">
+                    <span class="meal-row-title">มื้อเที่ยง</span>
+                    <span class="meal-row-desc" id="row-desc-lunch">ผัดซีอิ๊วเส้นใหญ่หมูสับ</span>
+                  </div>
+                </div>
+                <div class="meal-row-calories" id="row-cal-lunch">500 kcal</div>
+              </div>
+              <!-- Dinner -->
+              <div class="meal-log-row" id="dinner-row-container">
+                <div class="meal-row-left">
+                  <span class="meal-row-icon">🌙</span>
+                  <div class="meal-row-info">
+                    <span class="meal-row-title">มื้อเย็น</span>
+                    <span class="meal-row-desc empty" id="row-desc-dinner">+ บันทึกมื้อนี้</span>
+                  </div>
+                </div>
+                <button class="meal-quick-add" onclick="switchTab('tab-scan')">📸</button>
+              </div>
+            </div>
+
+            <!-- Decision support preview card -->
+            <div class="decision-preview-card">
+              <div class="decision-prev-header">
+                <span>🧭</span> ก่อนมื้อถัดไปแนะนำ
+              </div>
+              <div class="decision-prev-text" id="home-decision-coach-text">
+                น้ำตาลสะสมวันนี้ใกล้เป้าหมายแล้ว หลีกเลี่ยงน้ำหวานชาไข่มุก และเลือกข้าวกล้องในมื้อเย็นนะคะ
+              </div>
+              <button class="decision-prev-btn" onclick="switchTab('tab-decision')">ดูคำแนะนำทั้งหมด →</button>
+            </div>
+
+            <!-- Virtual Pet Widget -->
+            <div class="pet-widget-card" onclick="switchTab('tab-profile')">
+              <span class="pet-widget-illust" id="pet-widget-mood">🐱</span>
+              <div class="pet-widget-info">
+                <div class="pet-widget-header">
+                  <span class="pet-widget-name" id="pet-widget-name">น้องเต้าหู้</span>
+                  <span class="pet-widget-lvl" id="pet-widget-lvl">Lv. 3</span>
+                </div>
+                <div class="pet-widget-status" id="pet-widget-status">วันนี้น้ำตาลเกินเป้าหมาย น้องเหนื่อยเล็กน้อย ต้องการผักสักนิด!</div>
+              </div>
+            </div>
+          </div> <!-- End of home-normal-view -->
+
+          <!-- Onboarding Day 1 Home Empty State -->
+          <div id="home-empty-view" class="empty-state-view" style="display: none;">
+            <div class="empty-state-emoji" id="home-empty-emoji">🏠🥗</div>
+            <div class="empty-state-title" id="home-empty-title">ยินดีต้อนรับสู่วันแรกของคุณ!</div>
+            <div class="empty-state-desc" id="home-empty-desc">
+              ยินดีต้อนรับสู่ Nucistion! วันนี้ยังไม่มีการบันทึกอาหาร เริ่มสร้างพฤติกรรมโภชนาการที่ดีด้วยการถ่ายรูปหรือพิมพ์ค้นหาอาหารที่คุณทานเพื่อปลดล็อคบทวิเคราะห์ในแดชบอร์ดกันค่ะ
+            </div>
+            <button class="primary-btn" id="home-empty-btn" onclick="switchTab('tab-scan')" style="max-width: 220px; margin: 15px auto 0; display: block;">📸 บันทึกอาหารมื้อแรก</button>
+          </div>
+        </div>
+
+          <!-- ==================== MAIN TAB 2: Food Scan & Log ==================== -->
+          <div class="screen" id="main-tab-scan">
+            <!-- Viewfinder -->
+            <div class="scan-camera-viewfinder" id="camera-viewfinder">
+              <div class="scan-gps-overlay">
+                <div class="scan-gps-dot"></div>
+                <span id="scan-gps-lbl">📍 ร้านตามสั่ง เจ๊วรรณ</span>
+              </div>
+              <div class="scan-guide-box">
+                <div class="scan-guide-corner tl"></div>
+                <div class="scan-guide-corner tr"></div>
+                <div class="scan-guide-corner bl"></div>
+                <div class="scan-guide-corner br"></div>
+                <span class="scan-guide-lbl">🍽️ เล็งอาหารให้อยู่ในกรอบ</span>
+              </div>
+              <div class="camera-shutter-bar">
+                <button class="camera-shutter-btn" onclick="simulateAICapture()"></button>
+              </div>
+            </div>
+
+            <!-- Tabbed Bottom sheet -->
+            <div class="scan-bottom-sheet">
+              <div class="scan-tabs-header">
+                <button class="scan-tab-btn active" id="scan-subtab-photo" onclick="switchScanSubtab('photo')">📷 ถ่ายรูป</button>
+                <button class="scan-tab-btn" id="scan-subtab-barcode" onclick="switchScanSubtab('barcode')">📦 บาร์โค้ด</button>
+                <button class="scan-tab-btn" id="scan-subtab-search" onclick="switchScanSubtab('search')">✏️ ค้นหา</button>
+              </div>
+
+              <div class="scan-tab-content">
+                
+                <!-- CAMERA SUB-TAB VIEW (default after capture) -->
+                <div class="scan-tab-pane active" id="pane-photo">
+                  <!-- Skeleton dynamic indicator while analysis runs -->
+                  <div id="ai-loading" style="display: none; padding: 20px 0;">
+                    <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; text-align: center;">🤖 AI กำลังวิเคราะห์จานอาหาร...</div>
+                    <div class="onboarding-progress-bar" style="margin-bottom: 12px;">
+                      <div class="onboarding-progress-fill" id="ai-progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="skeleton-box skeleton-text"></div>
+                    <div class="skeleton-box skeleton-text short"></div>
+                  </div>
+
+                  <!-- Results screen content -->
+                  <div id="ai-result-content">
+                    <div class="analysis-food-summary">
+                      <span class="analysis-food-thumb" id="analysis-thumb">🥘</span>
+                      <div class="analysis-food-info">
+                        <div class="analysis-food-name" id="analysis-name">ผัดกะเพราหมูสับราดข้าว</div>
+                        <div class="analysis-confidence" id="analysis-conf">มั่นใจ 87%</div>
+                      </div>
+                    </div>
+
+                    <!-- Alternate Chips suggestion -->
+                    <div class="chip-container">
+                      <span class="chip-label">ไม่ใช่เมนูนี้? เลือกเมนูใกล้เคียง:</span>
+                      <button class="alternative-chip" onclick="selectAlternativeFood('ผัดกะเพราไก่ราดข้าว', '🥘')">ผัดกะเพราไก่ราดข้าว</button>
+                      <button class="alternative-chip" onclick="selectAlternativeFood('ข้าวผัดกะเพราคลุก', '🍛')">ข้าวผัดกะเพราคลุก</button>
+                      <button class="alternative-chip" onclick="selectAlternativeFood('อื่นๆ', '🍽️')">อื่นๆ</button>
+                    </div>
+
+                    <!-- Silhouette Portion Selector -->
+                    <div class="chip-label" style="margin-bottom: 6px;">ขนาดจาน / สัดส่วน (Portion Estimation):</div>
+                    <div class="portion-selector-grid">
+                      <div class="portion-card" id="portion-tbsp" onclick="selectPortion('tbsp', 0.25)">
+                        <span class="portion-icon">🥄</span>
+                        <span class="portion-name">ช้อนโต๊ะ</span>
+                      </div>
+                      <div class="portion-card" id="portion-sm" onclick="selectPortion('sm', 0.6)">
+                        <span class="portion-icon">🥣</span>
+                        <span class="portion-name">จานเล็ก</span>
+                      </div>
+                      <div class="portion-card active" id="portion-md" onclick="selectPortion('md', 1.0)">
+                        <span class="portion-icon">🍽️</span>
+                        <span class="portion-name">จานกลาง</span>
+                      </div>
+                      <div class="portion-card" id="portion-lg" onclick="selectPortion('lg', 1.4)">
+                        <span class="portion-icon">🍱</span>
+                        <span class="portion-name">จานใหญ่</span>
+                      </div>
+                      <div class="portion-card" id="portion-box" onclick="selectPortion('box', 1.1)">
+                        <span class="portion-icon">📦</span>
+                        <span class="portion-name">กล่องข้าว</span>
+                      </div>
+                    </div>
+
+                    <!-- Expanded Ingredients builder list -->
+                    <div class="ingredient-list">
+                      <div class="ingredient-header">ส่วนประกอบที่ตรวจพบ (Ingredient Builder):</div>
+                      <div class="ingredient-row">
+                        <span class="ingredient-name-label">🍚 ข้าวสวย (ทัพพี)</span>
+                        <div class="ingredient-controls">
+                          <button class="ingredient-btn" onclick="changeIngredientCount('rice', -1)">−</button>
+                          <span class="ingredient-count" id="count-rice">2</span>
+                          <button class="ingredient-btn" onclick="changeIngredientCount('rice', 1)">+</button>
+                        </div>
+                      </div>
+                      <div class="ingredient-row">
+                        <span class="ingredient-name-label">🥩 หมูสับติดมัน (กรัม)</span>
+                        <div class="ingredient-controls">
+                          <button class="ingredient-btn" onclick="changeIngredientCount('pork', -10)">-</button>
+                          <span class="ingredient-count" id="count-pork">80</span>
+                          <button class="ingredient-btn" onclick="changeIngredientCount('pork', 10)">+</button>
+                        </div>
+                      </div>
+                      <div class="ingredient-row">
+                        <span class="ingredient-name-label">🍳 ไข่ดาว (ฟอง)</span>
+                        <div class="ingredient-controls">
+                          <button class="ingredient-btn" onclick="changeIngredientCount('egg', -1)">−</button>
+                          <span class="ingredient-count" id="count-egg">1</span>
+                          <button class="ingredient-btn" onclick="changeIngredientCount('egg', 1)">+</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Smart warnings banner overlay if exceeds threshold -->
+                    <div class="warning-swap-banner" id="scan-warn-banner">
+                      <div class="warning-swap-title">⚠️ เมนูนี้จะทำให้โซเดียมเกินเป้าหมาย 35%</div>
+                      <div class="warning-swap-desc">
+                        คำแนะนำ: <span class="warning-swap-link" onclick="applySwapFood('กะเพราหมูสับไม่ใส่ซอสปรุงรส', 'ลดโซเดียมลง 40% และฟิตเป้าหมายคุณ')">ลองเปลี่ยนเป็น "กะเพราไก่สับไม่ใส่ซอสปรุงรส"</span> เพื่อลดโซเดียมสะสมมื้อนี้
+                      </div>
+                    </div>
+
+                    <!-- Nutrition impact preview charts -->
+                    <div class="nutrition-impact-card">
+                      <div class="impact-title">ผลกระทบต่อโภชนาการวันนี้ที่เหลืออยู่</div>
+                      <div class="impact-row">
+                        <span class="impact-label">พลังงาน</span>
+                        <div class="impact-bar-outer">
+                          <div class="impact-bar-inner green" id="impact-bar-cal" style="width: 32%"></div>
+                        </div>
+                        <span class="impact-value-tag" id="impact-val-cal">520 kcal</span>
+                      </div>
+                      <div class="impact-row">
+                        <span class="impact-label">น้ำตาล</span>
+                        <div class="impact-bar-outer">
+                          <div class="impact-bar-inner red" id="impact-bar-sugar" style="width: 90%"></div>
+                        </div>
+                        <span class="impact-value-tag" id="impact-val-sugar">8 g</span>
+                      </div>
+                      <div class="impact-row">
+                        <span class="impact-label">โซเดียม</span>
+                        <div class="impact-bar-outer">
+                          <div class="impact-bar-inner red" id="impact-bar-sodium" style="width: 82%"></div>
+                        </div>
+                        <span class="impact-value-tag" id="impact-val-sodium">1,240 mg</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Gym Persona Workout Timing Recommendation Badge -->
+                    <div class="workout-timing-pill" id="scan-workout-timing" style="display: none; margin: 10px 0; padding: 6px 12px; border-radius: var(--radius-sm); border-left: 3px solid #0369A1; line-height: 1.4; text-align: left; background: #E0F2FE; color: #0369A1; font-weight: 600;">
+                      ⏱️ <span id="scan-workout-timing-text">คำแนะนำเวลาการทานสำหรับการออกกำลังกาย</span>
+                    </div>
+
+                    <button class="primary-btn" id="btn-save-scanned-food" onclick="saveLoggedMeal()">บันทึกมื้อนี้ ✓</button>
+                  </div>
+
+                  <!-- Scan/AI failure UI (Crowdsourced contribution flow) -->
+                  <div id="ai-scan-error-view" style="display: none; padding: 14px; background: var(--surface); border-radius: var(--radius); border: 1.5px dashed var(--danger); margin-top: 10px;">
+                    <div style="font-size: 0.8rem; font-weight: 800; color: var(--danger); margin-bottom: 4px;">⚠️ AI ไม่สามารถจำแนกจานอาหารนี้ได้สำเร็จ</div>
+                    <div style="font-size: 0.65rem; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.45;">
+                      ระบบ AI ไม่พบเมนูนี้ในหมวดหมู่สุขภาพ คุณสามารถเพิ่มข้อมูลเข้าสู่ Crowdsourced Nutrition Wiki เพื่อแบ่งปันและสะสมแต้มได้ค่ะ:
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 8px;">
+                      <label style="font-size:0.65rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:2px;">ชื่อเมนูอาหาร</label>
+                      <input type="text" class="form-input" id="wiki-food-name" style="padding: 6px; font-size:0.75rem; height:32px;" placeholder="เช่น แกงไตปลาโบราณ">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 8px;">
+                      <label style="font-size:0.65rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:2px;">พลังงาน (แคลอรีโดยประมาณ)</label>
+                      <input type="number" class="form-input" id="wiki-food-cal" style="padding: 6px; font-size:0.75rem; height:32px;" placeholder="เช่น 180">
+                    </div>
+                    <div style="display:flex; gap:6px; margin-bottom:10px;">
+                      <div style="flex:1;">
+                        <label style="font-size:0.65rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:2px;">น้ำตาล (กรัม)</label>
+                        <input type="number" class="form-input" id="wiki-food-sugar" style="padding: 6px; font-size:0.75rem; height:32px;" placeholder="เช่น 2">
+                      </div>
+                      <div style="flex:1;">
+                        <label style="font-size:0.65rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:2px;">โซเดียม (มก.)</label>
+                        <input type="number" class="form-input" id="wiki-food-sodium" style="padding: 6px; font-size:0.75rem; height:32px;" placeholder="เช่น 750">
+                      </div>
+                    </div>
+                    <button class="primary-btn" style="padding:8px; font-size:0.75rem;" onclick="submitCrowdsourcedWiki()">บันทึกข้อมูลและส่งให้วิกิวิเคราะห์ (+15 แต้ม) 🤝</button>
+                  </div>
+
+                </div>
+
+                <!-- BARCODE SUB-TAB VIEW -->
+                <div class="scan-tab-pane" id="pane-barcode">
+                  <div class="barcode-guide-container">
+                    <div class="barcode-red-laser"></div>
+                    <span style="color: white; font-size: 0.68rem; z-index: 10;">เล็งบาร์โค้ดผลิตภัณฑ์ในกรอบนี้</span>
+                  </div>
+                  
+                  <div style="font-size:0.68rem; color:var(--text-secondary); text-align:center; margin-bottom:12px;">
+                    [จำลอง] กดปุ่มด้านล่างเพื่อแสกนบาร์โค้ดนมถั่วเหลือง NCD-friendly
+                  </div>
+                  <button class="primary-btn" style="padding: 8px 12px; font-size:0.8rem;" onclick="simulateBarcodeScan()">จำลองสแกนบาร์โค้ด</button>
+
+                  <div id="barcode-result-card" style="display: none; margin-top: 14px;">
+                    <div class="barcode-sim-photo">🥛</div>
+                    <div class="barcode-sim-name" id="barcode-title">นมดีน่านมถั่วเหลืองหวานน้อย</div>
+                    
+                    <div style="display:flex; justify-content:center; margin: 10px 0;">
+                      <label style="font-size:0.75rem; font-weight:600; margin-right:8px; align-self:center;">จำนวนเสิร์ฟ:</label>
+                      <input type="number" id="barcode-servings" class="form-input" style="width: 60px; padding: 4px;" value="1" oninput="calculateBarcodeImpact()">
+                    </div>
+
+                    <table class="nutrition-table">
+                      <thead>
+                        <tr>
+                          <th>คุณค่าทางโภชนาการ</th>
+                          <th class="val">ต่อ 1 กล่อง (230ml)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>พลังงาน (Calories)</td><td class="val">110 kcal</td></tr>
+                        <tr><td>น้ำตาล (Sugar)</td><td class="val">3 g</td></tr>
+                        <tr><td>โซเดียม (Sodium)</td><td class="val">65 mg</td></tr>
+                        <tr><td>ไขมัน (Fat)</td><td class="val">4.5 g</td></tr>
+                        <tr><td>โปรตีน (Protein)</td><td class="val">8 g</td></tr>
+                      </tbody>
+                    </table>
+
+                    <button class="primary-btn" onclick="saveBarcodeMeal()">บันทึกมื้อผลิตภัณฑ์นี้ ✓</button>
+                  </div>
+
+                  <!-- Barcode not found error UI -->
+                  <div id="barcode-error-view" style="display: none; padding: 14px; background: var(--surface); border-radius: var(--radius); border: 1.5px dashed var(--danger); margin-top: 10px;">
+                    <div style="font-size: 0.8rem; font-weight: 800; color: var(--danger); margin-bottom: 4px;">⚠️ ไม่พบข้อมูลบาร์โค้ดในฐานข้อมูล</div>
+                    <div style="font-size: 0.65rem; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.45;">
+                      ไม่พบผลิตภัณฑ์ชิ้นนี้ในบาร์โค้ดสารอาหาร คุณสามารถช่วยสร้าง Wiki ข้อมูลเพื่อสังคมได้ค่ะ:
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 8px;">
+                      <label style="font-size:0.65rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:2px;">ชื่อสินค้า/ผลิตภัณฑ์</label>
+                      <input type="text" class="form-input" id="wiki-barcode-name" style="padding: 6px; font-size:0.75rem; height:32px;" placeholder="เช่น โยเกิร์ตตราดีงามรสธรรมชาติหวาน 0%">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 8px;">
+                      <label style="font-size:0.65rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:2px;">พลังงาน (kcal)</label>
+                      <input type="number" class="form-input" id="wiki-barcode-cal" style="padding: 6px; font-size:0.75rem; height:32px;" placeholder="เช่น 95">
+                    </div>
+                    <div style="display:flex; gap:6px; margin-bottom:10px;">
+                      <div style="flex:1;">
+                        <label style="font-size:0.65rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:2px;">น้ำตาล (กรัม)</label>
+                        <input type="number" class="form-input" id="wiki-barcode-sugar" style="padding: 6px; font-size:0.75rem; height:32px;" placeholder="เช่น 3">
+                      </div>
+                      <div style="flex:1;">
+                        <label style="font-size:0.65rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:2px;">โซเดียม (มก.)</label>
+                        <input type="number" class="form-input" id="wiki-barcode-sodium" style="padding: 6px; font-size:0.75rem; height:32px;" placeholder="เช่น 45">
+                      </div>
+                    </div>
+                    <button class="primary-btn" style="padding:8px; font-size:0.75rem;" onclick="submitBarcodeWiki()">บันทึกผลิตภัณฑ์ขึ้นฐานข้อมูลชุมชน (+15 แต้ม) 🤝</button>
+                  </div>
+
+                </div>
+
+                <!-- MANUAL SEARCH SUB-TAB VIEW -->
+                <div class="scan-tab-pane" id="pane-search">
+                  <div class="search-input-container">
+                    <span class="search-icon-inside">🔍</span>
+                    <input type="text" class="search-input-field" id="search-food-input" placeholder="ค้นหาชื่ออาหาร เช่น แกงจืด ข้าวหมูแดง..." oninput="filterFoodSearch()">
+                  </div>
+
+                  <div class="chip-container">
+                    <span class="chip-label">ที่กินบ่อยประจำ:</span>
+                    <button class="alternative-chip" onclick="setQuickSearchValue('ข้าวต้มหมู')">ข้าวต้มหมู</button>
+                    <button class="alternative-chip" onclick="setQuickSearchValue('ปลานึ่งซีอิ๊ว')">ปลานึ่งซีอิ๊ว</button>
+                    <button class="alternative-chip" onclick="setQuickSearchValue('ต้มจืดเต้าหู้')">ต้มจืดเต้าหู้</button>
+                    <button class="alternative-chip" onclick="setQuickSearchValue('แกงแก้วตา')">แกงเผ็ด</button>
+                  </div>
+
+                  <div class="search-results-list" id="search-results-list">
+                    <!-- Results populate dynamically -->
+                    <div class="search-result-row" onclick="selectSearchFood('แกงจืดเต้าหู้หมูสับ', 120, 2, 450, 12, 4)">
+                      <span class="search-result-name">แกงจืดเต้าหู้หมูสับ (ถ้วยเล็ก)</span>
+                      <span class="search-result-cals">120 kcal</span>
+                    </div>
+                    <div class="search-result-row" onclick="selectSearchFood('ข้าวมันไก่ผสม', 680, 4, 980, 24, 25)">
+                      <span class="search-result-name">ข้าวมันไก่ผสมจานกลาง</span>
+                      <span class="search-result-cals">680 kcal</span>
+                    </div>
+                    <div class="search-result-row" onclick="selectSearchFood('ก๋วยเตี๋ยวเรือน้ำตกหมู', 380, 6, 1100, 14, 12)">
+                      <span class="search-result-name">ก๋วยเตี๋ยวเรือน้ำตกหมู</span>
+                      <span class="search-result-cals">380 kcal</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== MAIN TAB 3: DECISION INTELLIGENCE ==================== -->
+          <div class="screen" id="main-tab-decision">
+            <div class="decision-header">
+              <div class="search-input-container" style="margin-bottom: 8px;">
+                <span class="search-icon-inside">🔍</span>
+                <input type="text" class="search-input-field" id="decision-search-input" placeholder="กำลังจะกินอะไร? ค้นหาเพื่อดูผลกระทบ" oninput="runDecisionImpactAnalysis()">
+              </div>
+              
+              <!-- Quick search preset chips -->
+              <div class="chip-container" style="padding: 0 4px; margin-bottom: 4px; display: flex; gap: 6px; flex-wrap: wrap;">
+                <span class="chip-label" style="font-size: 0.65rem; color: var(--text-secondary); margin-bottom: 4px; width: 100%;">เมนูยอดนิยมสำหรับจำลองวิเคราะห์:</span>
+                <button class="alternative-chip" onclick="setDecisionSearchValue('ข้าวมันไก่ผสมจานกลาง')">🐔 ข้าวมันไก่</button>
+                <button class="alternative-chip" onclick="setDecisionSearchValue('แกงจืดเต้าหู้หมูสับ (ถ้วยเล็ก)')">🥦 แกงจืดเต้าหู้</button>
+                <button class="alternative-chip" onclick="setDecisionSearchValue('ชานมไข่มุกหวานปกติ')">🧋 ชานมไข่มุก</button>
+                <button class="alternative-chip" onclick="setDecisionSearchValue('ก๋วยเตี๋ยวเรือน้ำตกหมู')">🍜 ก๋วยเตี๋ยวเรือ</button>
+              </div>
+            </div>
+
+            <!-- SECTION 1: BEFORE YOU ORDER -->
+            <div class="decision-section-head">ก่อนที่คุณจะสั่ง (Before You Order)</div>
+            
+            <div id="decision-impact-display">
+              <!-- Initial state -->
+              <div class="impact-summary-card" style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                <span>💡 พิมพ์เมนูอาหารในช่องค้นหาด้านบน เพื่อวิเคราะห์ผลกระทบต่อเป้าหมายสุขภาพของป้าสมใจทันที</span>
+              </div>
+            </div>
+
+            <!-- SECTION 2: RESTAURANT DECISION SUPPORT -->
+            <div class="decision-section-head">ร้านอาหารใกล้ฉันแนะนำ</div>
+            <div class="filter-chips-row">
+              <button class="filter-chip active" id="fc-match" onclick="filterRestaurants('match')">ตรงเป้าหมายสูงสุด</button>
+              <button class="filter-chip" id="fc-dist" onclick="filterRestaurants('dist')">ใกล้ที่สุด</button>
+              <button class="filter-chip" id="fc-cheap" onclick="filterRestaurants('cheap')">ราคาประหยัด</button>
+            </div>
+
+            <div id="restaurant-list-container">
+              <!-- Restaurant 1 -->
+              <div class="restaurant-card" onclick="openRestaurantMenu('ร้านข้าวต้มกุ๊ย โชคเจริญ', '89%')">
+                <div class="restaurant-top">
+                  <span class="restaurant-name">ร้านข้าวต้มกุ๊ย โชคเจริญ</span>
+                  <span class="compatibility-score">เข้ากับเป้าหมายคุณ 89%</span>
+                </div>
+                <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:2px;">📍 ห่างออกไป 250 ม.</div>
+                <div class="restaurant-menus-preview">
+                  <span class="menu-chip-mini">🐟 ปลานึ่งขิง (Na 420mg)</span>
+                  <span class="menu-chip-mini">🥦 ผัดยอดฟักแม้ว (Na 310mg)</span>
+                  <span class="menu-chip-mini">🥘 ต้มจืดมะระหมูสับ</span>
+                </div>
+              </div>
+              <!-- Restaurant 2 -->
+              <div class="restaurant-card" onclick="openRestaurantMenu('ตามสั่งเจ๊วรรณปากซอย', '82%')">
+                <div class="restaurant-top">
+                  <span class="restaurant-name">ตามสั่งเจ๊วรรณปากซอย</span>
+                  <span class="compatibility-score">เข้ากับเป้าหมายคุณ 82%</span>
+                </div>
+                <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:2px;">📍 ห่างออกไป 80 ม.</div>
+                <div class="restaurant-menus-preview">
+                  <span class="menu-chip-mini">🥘 กะเพราไก่ไม่เค็ม</span>
+                  <span class="menu-chip-mini">🥚 ไข่ต้ม/ไข่ดาวไร้น้ำมัน</span>
+                  <span class="menu-chip-mini">🥬 ผัดผักกาดขาว</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 3.6: ACTIVITY-AWARE NUTRITION & TIMING -->
+            <div class="decision-section-head" style="display: flex; justify-content: space-between; align-items: center; padding-right: 20px;">
+              <span>3.6 กิจกรรม & แนะนำมื้ออาหารก่อนกิจกรรม</span>
+              <span id="calendar-sync-status-badge" style="font-size: 0.55rem; font-weight: 700; background: var(--primary-light); color: var(--primary-dark); padding: 1px 6px; border-radius: 12px; border: 1px solid var(--border); display: inline-block;">📅 ซิงก์ปฏิทินแล้ว</span>
+            </div>
+            <div class="activity-log-box" style="margin: 0 20px 14px; padding: 12px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow);">
+              <!-- Activity selector -->
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">🏋️ วันนี้กิจกรรมหลักของคุณคืออะไร? (Activity Log)</div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px;" id="activity-selector-grid">
+                <button class="alternative-chip active" onclick="selectActivityLog('rest')" id="act-btn-rest" style="text-align: center; justify-content: center; padding: 6px 2px;">🛌 วันพักฟื้น</button>
+                <button class="alternative-chip" onclick="selectActivityLog('weight')" id="act-btn-weight" style="text-align: center; justify-content: center; padding: 6px 2px;">🏋️‍♂️ ยกเวทหนัก</button>
+                <button class="alternative-chip" onclick="selectActivityLog('cardio')" id="act-btn-cardio" style="text-align: center; justify-content: center; padding: 6px 2px;">🏃‍♂️ วิ่ง/Cardio</button>
+                <button class="alternative-chip" onclick="selectActivityLog('exam')" id="act-btn-exam" style="text-align: center; justify-content: center; padding: 6px 2px;">📝 วันสอบ</button>
+                <button class="alternative-chip" onclick="selectActivityLog('meeting')" id="act-btn-meeting" style="text-align: center; justify-content: center; padding: 6px 2px;">💼 ประชุมสำคัญ</button>
+                <button class="alternative-chip" onclick="selectActivityLog('swim')" id="act-btn-swim" style="text-align: center; justify-content: center; padding: 6px 2px;">🏊‍♂️ ว่ายน้ำ</button>
+              </div>
+
+              <!-- Adjusted Macro recommendation output based on activity -->
+              <div class="lab-correlation-bubble" id="activity-macro-adjustment" style="font-size: 0.65rem; line-height: 1.45; background: var(--primary-light); color: var(--primary-dark); border: none; margin-bottom: 10px; margin-top: 0; padding: 8px;">
+                💡 <strong>วันพักฟื้น:</strong> ระบบปรับลดแคลอรีสะสมลงเล็กน้อย เน้นสัดส่วนโปรตีนเพื่อซ่อมแซมกล้ามเนื้อ ปรับเป้าหมายวันนี้: คาร์บปานกลาง / โซเดียมต่ำ
+              </div>
+
+              <!-- Sub-section: Pre-Activity Meal Timing Planner -->
+              <div style="border-top: 1px solid var(--border); padding-top: 8px;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                  <span>⏰ วางแผนเวลากินรอบกิจกรรม (Meal Timing)</span>
+                  <div style="display: flex; align-items: center; gap: 2px;">
+                    <input type="text" class="time-slot-input" id="activity-time-input" value="17:00" placeholder="17:00" maxlength="5" oninput="formatTimeInput(this)" onblur="validateAndCleanTimeInput(this)" style="font-size: 0.72rem; padding: 2px 4px; width: 55px; height: auto; border: 1.5px solid var(--border); border-radius: 6px; text-align: center;">
+                    <span style="font-size: 0.62rem; color: var(--text-muted);">น.</span>
+                  </div>
+                </div>
+
+                <div class="pre-activity-timeline" id="pre-activity-timeline-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+                  <!-- Timeline steps populate dynamically -->
+                </div>
+                
+                <button class="primary-btn" onclick="triggerSimulatedPreActivityNotification()" style="margin-top: 8px; padding: 6px; font-size: 0.68rem; font-weight: 700; width: 100%; border-radius: 8px;">🔔 จำลองส่งแจ้งเตือนกินก่อนกิจกรรม</button>
+              </div>
+            </div>
+
+            <!-- SECTION 3: NEXT MEAL RECOMMENDATIONS -->
+            <div class="decision-section-head">มื้อถัดไปแนะนำสำหรับคุณ</div>
+            
+            <div class="rec-meal-card">
+              <span class="rec-meal-photo">🐟</span>
+              <div class="rec-meal-info">
+                <span class="rec-meal-title">ปลานึ่งซีอิ๊วใส่ขิง</span>
+                <span class="rec-meal-reason">โปรตีนสูง 28g ที่ยังขาดอยู่ และช่วยลดโซเดียมมื้อเย็น</span>
+              </div>
+            </div>
+
+            <div class="rec-meal-card">
+              <span class="rec-meal-photo">🥦</span>
+              <div class="rec-meal-info">
+                <span class="rec-meal-title">ต้มจืดผักรวมเต้าหู้หมูสับ (ไม่ปรุงน้ำปลาเพิ่ม)</span>
+                <span class="rec-meal-reason">เพิ่มใยอาหารและมีโพแทสเซียมขับเกลือส่วนเกิน</span>
+              </div>
+            </div>
+
+            <!-- SECTION 4: NUTRITION COACH BUBBLE -->
+            <div class="decision-section-head">โค้ชโภชนาการส่วนตัว</div>
+            <div class="coach-bubble-card">
+              <span class="coach-avatar">👩‍⚕️</span>
+              <div class="coach-message-box">
+                <span class="coach-name">หมอนภา สุขใจ</span>
+                <div class="coach-msg-text" id="coach-tip-bubble">
+                  สวัสดีค่ะคุณป้าสมใจ ในสัปดาห์ที่ผ่านมาคุณป้าพยายามจำกัดน้ำหวานได้ดีมากค่ะ แต่โซเดียมในช่วงมื้อเที่ยงยังเกินเป้าหมายเฉลี่ยอยู่ ลองเลี่ยงการซดน้ำแกงลงซักนิด หรือระบุกับร้านค้าว่า "ไม่เค็ม" ดูนะคะ เริ่มทีละนิดสุขภาพดีแน่นอนค่ะ! 💚
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== MAIN TAB 4: INSIGHTS & OUTCOMES ==================== -->
+          <div class="screen" id="main-tab-insights">
+            <div id="insights-normal-view">
+              
+              <!-- Reduction Cards Grid -->
+              <div class="reduction-grid" id="reduction-cards-grid" style="margin-top: 14px;">
+                <div class="reduction-card success-border" onclick="openGoalImpactScreen()" style="cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                  <span class="reduction-lbl">🍬 ดัชนีลดน้ำตาลสะสม</span>
+                  <span class="reduction-val" id="reduc-val-sugar">34% ↓</span>
+                  <span class="reduction-sub">เทียบกับสัปดาห์แรก</span>
+                </div>
+                <div class="reduction-card success-border" onclick="openGoalImpactScreen()" style="cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                  <span class="reduction-lbl">🧂 ดัชนีลดโซเดียมสะสม</span>
+                  <span class="reduction-val" id="reduc-val-sodium">30% ↓</span>
+                  <span class="reduction-sub">เทียบกับสัปดาห์แรก</span>
+                </div>
+              </div>
+
+              <!-- Weekly Highlights score -->
+              <div class="weekly-summary-card" style="margin-top: 4px;">
+                <span class="weekly-sum-title">สรุปพฤติกรรมรอบสัปดาห์นี้</span>
+                <div class="weekly-sum-highlight" id="insights-weekly-highlight">คุณจำกัดโซเดียมตามเป้าหมายได้ 5 จาก 7 วัน 🎉</div>
+                <div class="weekly-sum-score">Habit Score: 78 / 100</div>
+                <button class="primary-btn" style="margin-top: 12px; padding: 8px; font-size: 0.72rem; background: rgba(255,255,255,0.2); box-shadow: none;" onclick="openWeeklyInsightsScreen()">ดูสรุปรายสัปดาห์แบบละเอียด (Full Page) →</button>
+              </div>
+              
+              <!-- Habit Score Sparklines -->
+              <div class="habit-sparkline-row">
+                <div class="spark-bar-group">
+                  <div class="spark-bar active" style="height: 38px;"></div>
+                  <span class="spark-lbl">จ</span>
+                </div>
+                <div class="spark-bar-group">
+                  <div class="spark-bar active" style="height: 42px;"></div>
+                  <span class="spark-lbl">อ</span>
+                </div>
+                <div class="spark-bar-group">
+                  <div class="spark-bar" style="height: 25px;"></div>
+                  <span class="spark-lbl">พ</span>
+                </div>
+                <div class="spark-bar-group">
+                  <div class="spark-bar active" style="height: 44px;"></div>
+                  <span class="spark-lbl">พฤ</span>
+                </div>
+                <div class="spark-bar-group">
+                  <div class="spark-bar active" style="height: 46px;"></div>
+                  <span class="spark-lbl">ศ</span>
+                </div>
+                <div class="spark-bar-group">
+                  <div class="spark-bar" style="height: 28px;"></div>
+                  <span class="spark-lbl">ส</span>
+                </div>
+                <div class="spark-bar-group">
+                  <div class="spark-bar active" style="height: 48px;"></div>
+                  <span class="spark-lbl">อา</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 2: TRIGGER DETECTION -->
+            <div class="decision-section-head">พฤติกรรมการกินที่ระบบตรวจพบ (Trigger Detection)</div>
+            
+            <div class="pattern-card">
+              <div class="pattern-desc">🧋 คุณดื่มชานมไข่มุก ทุกวันศุกร์เวลา 15:30 หลังเสร็จงาน</div>
+              <div class="pattern-actions">
+                <button class="pattern-btn-acknowledge" onclick="acknowledgeTrigger(this)">รับรู้แล้ว</button>
+                <button class="pattern-btn-suggest" onclick="showTriggerAIdialog('ชานมหวาน 25% ทดแทน')">ปรับพฤติกรรม 💡</button>
+              </div>
+            </div>
+
+            <div class="pattern-card">
+              <div class="pattern-desc">🌙 มื้อดึกทุกวันพุธ มักเพิ่มแคลอรีขึ้นเฉลี่ย 340 kcal จากโจ๊กซอง</div>
+              <div class="pattern-actions">
+                <button class="pattern-btn-acknowledge" onclick="acknowledgeTrigger(this)">รับรู้แล้ว</button>
+                <button class="pattern-btn-suggest" onclick="showTriggerAIdialog('เลือกกล้วยหอมโยเกิร์ต')">ปรับพฤติกรรม 💡</button>
+              </div>
+            </div>
+
+            <!-- SECTION 3: TREND CHARTS -->
+            <div class="decision-section-head">แนวโน้มระยะยาว</div>
+            
+            <div class="trend-charts-box">
+              <div class="trend-period-tabs">
+                <button class="trend-period-btn active" id="tb-30" onclick="changeTrendPeriod(30)">30 วัน</button>
+                <button class="trend-period-btn" id="tb-90" onclick="changeTrendPeriod(90)">90 วัน</button>
+                <button class="trend-period-btn" id="tb-180" onclick="changeTrendPeriod(180)">180 วัน</button>
+              </div>
+
+              <!-- Animated Chart Grid -->
+              <div style="font-size:0.7rem; font-weight:bold; margin-bottom:6px;" id="trend-chart-title">ระดับโซเดียมเฉลี่ยเทียบกับเกณฑ์ NCD</div>
+              <div class="render-chart-area" id="trend-bars-container">
+                <!-- Dynamic SVG/div bars -->
+                <div class="chart-dotted-limit-line" style="bottom: 70%"></div>
+                <span class="chart-limit-lbl" style="bottom: 70%">WHO Limit 1,500mg</span>
+
+                <div class="chart-col-bar">
+                  <span class="chart-col-val">2.2k</span>
+                  <div class="chart-col-fill danger" style="height: 80px;"></div>
+                  <span class="chart-col-lbl">สัปดาห์ 1</span>
+                </div>
+                <div class="chart-col-bar">
+                  <span class="chart-col-val">1.8k</span>
+                  <div class="chart-col-fill warning" style="height: 64px;"></div>
+                  <span class="chart-col-lbl">สัปดาห์ 2</span>
+                </div>
+                <div class="chart-col-bar">
+                  <span class="chart-col-val">1.4k</span>
+                  <div class="chart-col-fill" style="height: 52px;"></div>
+                  <span class="chart-col-lbl">สัปดาห์ 3</span>
+                </div>
+                <div class="chart-col-bar">
+                  <span class="chart-col-val">1.3k</span>
+                  <div class="chart-col-fill" style="height: 48px;"></div>
+                  <span class="chart-col-lbl">สัปดาห์ 4</span>
+                </div>
+              </div>
+              
+              <div style="display:flex; justify-content:space-around; margin-top:8px;">
+                <button class="filter-chip active" style="font-size:0.6rem; padding:4px 8px;" onclick="changeTrendType('sodium')">โซเดียม</button>
+                <button class="filter-chip" style="font-size:0.6rem; padding:4px 8px;" onclick="changeTrendType('sugar')">น้ำตาล</button>
+                <button class="filter-chip" style="font-size:0.6rem; padding:4px 8px;" onclick="changeTrendType('cals')">แคลอรี</button>
+              </div>
+            </div>
+
+            <!-- SECTION 4: OUTCOME VALIDATION -->
+            <div class="decision-section-head">ผลลัพธ์ของคุุณ (Before vs After)</div>
+            
+            <div class="outcome-validation-box">
+              <div class="before-after-grid">
+                <div class="ba-card">
+                  <span class="ba-lbl">น้ำหนักตัว (Weight)</span>
+                  <div class="ba-values">
+                    <span class="ba-val-before">82 kg</span>
+                    <span class="ba-val-after">79 kg</span>
+                  </div>
+                  <span class="ba-change-tag down">↓ ลดลง 3.0 kg</span>
+                </div>
+
+                <div class="ba-card">
+                  <span class="ba-lbl">ดัชนีมวลกาย (BMI)</span>
+                  <div class="ba-values">
+                    <span class="ba-val-before">32.8</span>
+                    <span class="ba-val-after">31.6</span>
+                  </div>
+                  <span class="ba-change-tag down">↓ ลดลง 1.2</span>
+                </div>
+
+                <div class="ba-card" id="ba-card-waist">
+                  <span class="ba-lbl">ขนาดรอบเอว (Waist)</span>
+                  <div class="ba-values">
+                    <span class="ba-val-before">98 cm</span>
+                    <span class="ba-val-after" id="insights-waist-after-val">94 cm</span>
+                  </div>
+                  <span class="ba-change-tag down" id="insights-waist-diff-tag">↓ ลดลง 4 cm</span>
+                </div>
+
+                <div class="ba-card">
+                  <span class="ba-lbl">โซเดียมเฉลี่ยต่อวัน</span>
+                  <div class="ba-values">
+                    <span class="ba-val-before">2,800mg</span>
+                    <span class="ba-val-after">1,950mg</span>
+                  </div>
+                  <span class="ba-change-tag down">↓ ลดลง 30%</span>
+                </div>
+
+                <div class="ba-card">
+                  <span class="ba-lbl">น้ำตาลเฉลี่ยต่อวัน</span>
+                  <div class="ba-values">
+                    <span class="ba-val-before">58 g</span>
+                    <span class="ba-val-after">38 g</span>
+                  </div>
+                  <span class="ba-change-tag down">↓ ลดลง 34%</span>
+                </div>
+              </div>
+
+              <!-- Input for Waist circumference for Obesity Tracker -->
+              <div style="margin: 12px 0 4px; padding: 10px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border);" id="waist-input-container">
+                <label style="font-size:0.7rem; font-weight:700; display:block; margin-bottom:4px; color:var(--text-primary);">⚖️ บันทึกขนาดรอบเอววันนี้ (Waist Measurement)</label>
+                <div style="display:flex; gap:8px;">
+                  <input type="number" id="input-waist-today" class="form-input" style="padding:4px 8px; font-size:0.75rem; height:30px; margin:0;" placeholder="ระบุรอบเอว (ซม.)" value="94">
+                  <button class="primary-btn" style="padding:4px 12px; font-size:0.72rem; width:auto; height:30px; margin:0;" onclick="saveWaistMeasurement()">บันทึกรอบเอว</button>
+                </div>
+              </div>
+
+              <!-- Body Composition Tracking Card (Layer 6) -->
+              <div class="outcome-validation-box" style="margin-top: 12px; padding: 12px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border);">
+                <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                  <span>🧬 องค์ประกอบร่างกาย (Body Composition)</span>
+                  <select class="form-input" id="body-comp-goal" onchange="changeBodyCompGoal()" style="width: auto; padding: 2px 6px; font-size: 0.65rem; height: auto; border-radius: 8px; margin: 0; border: 1px solid var(--border);">
+                    <option value="recomp">Recomp (เพิ่มกล้าม+ลดไขมัน)</option>
+                    <option value="bulk">Bulk (เพิ่มกล้ามเนื้อ)</option>
+                    <option value="cut">Cut (ลดไขมันรักษากล้าม)</option>
+                    <option value="gain">เพิ่มน้ำหนัก (เพิ่มน้ำหนักตัว)</option>
+                    <option value="none">ไม่มี (รักษาน้ำหนักตัว)</option>
+                  </select>
+                </div>
+
+                <!-- 3-Way Selector Method Tabs -->
+                <div style="display: flex; background: var(--bg); border-radius: 8px; padding: 2px; border: 1px solid var(--border); margin-bottom: 10px;">
+                  <button id="bf-method-btn-manual" onclick="switchBfMethod('manual')" style="flex: 1; padding: 5px 2px; font-size: 0.62rem; border: none; background: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer; border-radius: 6px; font-weight: 700; color: var(--primary-dark); transition: all 0.2s;">✍️ กรอกเอง</button>
+                  <button id="bf-method-btn-visual" onclick="switchBfMethod('visual')" style="flex: 1; padding: 5px 2px; font-size: 0.62rem; border: none; background: transparent; cursor: pointer; border-radius: 6px; font-weight: 600; color: var(--text-muted); transition: all 0.2s;">👤 เลือกรูปร่าง</button>
+                  <button id="bf-method-btn-navy" onclick="switchBfMethod('navy')" style="flex: 1; padding: 5px 2px; font-size: 0.62rem; border: none; background: transparent; cursor: pointer; border-radius: 6px; font-weight: 600; color: var(--text-muted); transition: all 0.2s;">📏 สายวัด (Navy)</button>
+                </div>
+
+                <!-- Panel 1: Manual Input (Method 3) -->
+                <div id="bf-panel-manual" style="margin-bottom: 10px;">
+                  <div style="display: flex; gap: 8px; align-items: flex-end;">
+                    <div style="flex: 1;">
+                      <label style="font-size: 0.62rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 2px;">เปอร์เซ็นต์ไขมัน (% Body Fat)</label>
+                      <input type="number" class="form-input" id="input-body-fat" placeholder="ระบุ % เช่น 28" value="32" oninput="calculateBodyComp()" style="padding: 4px 8px; font-size: 0.72rem; height: 30px; margin: 0; width: 100%;">
+                    </div>
+                  </div>
+                  <span style="font-size: 0.58rem; color: var(--text-muted); display: block; margin-top: 4px;">*กรอกตัวเลขที่ได้จากเครื่องชั่ง Smart Scale หรือผลการตรวจ InBody ในยิม</span>
+                </div>
+
+                <!-- Panel 2: Visual Selector (Method 1) -->
+                <div id="bf-panel-visual" style="display: none; margin-bottom: 10px;">
+                  <label style="font-size: 0.62rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">แตะเลือกรูปร่างปัจจุบันที่ตรงกับคุณมากที่สุด:</label>
+                  <div style="display: flex; flex-direction: column; gap: 4px;" id="visual-options-container">
+                    <!-- Loaded dynamically via JavaScript based on Gender -->
+                  </div>
+                </div>
+
+                <!-- Panel 3: Navy Circumference Formula (Method 2) -->
+                <div id="bf-panel-navy" style="display: none; margin-bottom: 10px;">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                    <div>
+                      <label style="font-size: 0.58rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 1px;">รอบคอ (ซม.)</label>
+                      <input type="number" class="form-input" id="navy-neck" value="38" style="padding: 4px 6px; font-size: 0.7rem; height: 26px; margin: 0; width: 100%;">
+                    </div>
+                    <div>
+                      <label style="font-size: 0.58rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 1px;">รอบเอว (ซม.)</label>
+                      <input type="number" class="form-input" id="navy-waist" value="94" style="padding: 4px 6px; font-size: 0.7rem; height: 26px; margin: 0; width: 100%;">
+                    </div>
+                    <div id="navy-hip-container" style="display: none; grid-column: span 2;">
+                      <label style="font-size: 0.58rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 1px;">รอบสะโพก (ซม.) *เฉพาะผู้หญิง</label>
+                      <input type="number" class="form-input" id="navy-hip" value="98" style="padding: 4px 6px; font-size: 0.7rem; height: 26px; margin: 0; width: 100%;">
+                    </div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.6rem; color: var(--text-secondary); margin-bottom: 6px; background: var(--bg); padding: 4px 6px; border-radius: 4px;">
+                    <span>ความสูงของโปรไฟล์ปัจจุบัน:</span>
+                    <span style="font-weight: 700;" id="navy-height-lbl">158 ซม.</span>
+                  </div>
+                  <button class="primary-btn" onclick="calculateNavyBf()" style="padding: 6px; font-size: 0.68rem; font-weight: 700; width: 100%; border-radius: 8px;">คำนวณผลจากสูตรสายวัดราชนาวี 📐</button>
+                </div>
+
+                <div class="before-after-grid" style="grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+                  <div class="ba-card" style="padding: 6px 8px;">
+                    <span class="ba-lbl" style="font-size: 0.58rem;">Lean Mass (มวลกายไร้ไขมัน)</span>
+                    <div class="ba-values" style="margin: 2px 0;">
+                      <span class="ba-val-before" id="lean-mass-before" style="font-size: 0.85rem; font-weight: 700;">55.8 kg</span>
+                      <span class="ba-val-after" id="lean-mass-after" style="font-size: 0.85rem; color: var(--primary-dark); font-weight: 700;">57.1 kg</span>
+                    </div>
+                    <span class="ba-change-tag up" id="lean-mass-diff" style="font-size: 0.55rem; padding: 1px 4px;">↑ เพิ่มขึ้น 1.3 kg</span>
+                  </div>
+
+                  <div class="ba-card" style="padding: 6px 8px;">
+                    <span class="ba-lbl" style="font-size: 0.58rem;">Fat Mass (มวลไขมันรวม)</span>
+                    <div class="ba-values" style="margin: 2px 0;">
+                      <span class="ba-val-before" id="fat-mass-before" style="font-size: 0.85rem; font-weight: 700;">26.2 kg</span>
+                      <span class="ba-val-after" id="fat-mass-after" style="font-size: 0.85rem; color: var(--danger); font-weight: 700;">21.9 kg</span>
+                    </div>
+                    <span class="ba-change-tag down" id="fat-mass-diff" style="font-size: 0.55rem; padding: 1px 4px;">↓ ลดลง 4.3 kg</span>
+                  </div>
+                </div>
+
+                <!-- Lean mass macro targets output -->
+                <div style="background: var(--bg); border-radius: 8px; padding: 8px; margin-top: 8px; font-size: 0.65rem; line-height: 1.4;">
+                  <strong style="color: var(--text-primary); display: block; margin-bottom: 2px;">🎯 เป้าหมายโปรตีน คำนวณจาก Lean Mass (1.6 - 2.2g / kg):</strong>
+                  <div style="display: flex; justify-content: space-between;">
+                    <span>แนะนำโปรตีนต่อวัน:</span>
+                    <span style="font-weight: 700; color: var(--primary-dark);" id="lean-protein-target">91 - 125 g/วัน</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-top: 1px;">
+                    <span>สัดส่วนเป้าหมาย Macro:</span>
+                    <span id="lean-macro-ratio-desc" style="color: var(--text-secondary); font-weight: 600;">Recomp Balance (แป้งปานกลาง / ไขมันปานกลาง)</span>
+                  </div>
+                </div>
+
+                <!-- Disclaimer Note -->
+                <div style="font-size: 0.58rem; color: var(--text-muted); margin-top: 8px; line-height: 1.35; background: var(--bg); padding: 6px 8px; border-radius: 6px; border: 1.5px solid var(--border);">
+                  ⚠️ <strong>คำแนะนำการวิเคราะห์:</strong> อุปกรณ์และวิธีการต่างๆ วัดผลไม่ได้แม่นยำ 100% สิ่งสำคัญที่สุดคือทิศทางแนวโน้มการเปลี่ยนแปลง (Trend) เมื่อเวลาผ่านไป ไม่ใช่ทศนิยมของตัวเลขแน่นอนค่ะ
+                </div>
+              </div>
+
+              <div style="font-size: 0.75rem; font-weight: 700; margin-top: 12px; color: var(--primary-dark);">
+                💚 คำแนะนำที่ได้ผลดีสำหรับคุณ: Smart Swap ชาหวานน้อย ทำสำเร็จ 8/10 ครั้ง
+              </div>
+            </div>
+
+            <!-- SECTION 4.2: GOAL IMPACT ENGINE -->
+            <div class="decision-section-head">Goal Impact Engine (การประเมินผลต่อเป้าหมาย)</div>
+            <div class="dashboard-card" id="goal-impact-engine-card" onclick="openGoalImpactScreen()" style="cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div style="font-size: 0.75rem; font-weight: bold; color: var(--primary-dark); margin-bottom: 8px;" id="gi-title">เป้าหมาย: ควบคุมน้ำตาลสะสม (HbA1c) สำหรับเบาหวาน</div>
+              <div class="impact-row">
+                <span class="impact-label" style="width: 70px;" id="gi-label-1">คุมน้ำตาล</span>
+                <div class="impact-bar-outer">
+                  <div class="impact-bar-inner green" id="gi-bar-sugar" style="width: 72%"></div>
+                </div>
+                <span class="impact-value-tag" id="gi-val-sugar">72%</span>
+              </div>
+              <div class="impact-row" style="margin-top: 8px;">
+                <span class="impact-label" style="width: 70px;" id="gi-label-2">คุมโซเดียม</span>
+                <div class="impact-bar-outer">
+                  <div class="impact-bar-inner amber" id="gi-bar-sodium" style="width: 55%"></div>
+                </div>
+                <span class="impact-value-tag" id="gi-val-sodium">55%</span>
+              </div>
+              <div style="font-size: 0.68rem; color: var(--text-secondary); margin-top: 10px; line-height: 1.45;" id="gi-desc">
+                *การกินวันนี้ช่วยประคองระดับน้ำตาลสะสม (HbA1c) ให้อยู่ในแนวโน้มลดลง แต่การกินโซเดียมมื้อเที่ยงที่เค็มมีผลกระทบปานกลางต่อแรงดันหลอดเลือด
+              </div>
+            </div>
+
+            <!-- SECTION 4.3: NCD RISK ANALYSIS -->
+            <div class="decision-section-head">วิเคราะห์ความเสี่ยง NCD (NCD Risk Analysis)</div>
+            <div class="dashboard-card" id="ncd-risk-analysis-card" onclick="openNCDRiskTrendScreen()" style="cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div style="font-size:0.75rem; font-weight:700; margin-bottom:10px;">ประเมินระดับความเสี่ยงสุขภาพรายสัปดาห์</div>
+              <!-- Risk Row 1 -->
+              <div style="margin-bottom: 8px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.68rem; font-weight:600; margin-bottom:3px;">
+                  <span id="ncd-risk-label-1">ความเสี่ยงโรคเบาหวาน (Diabetes Risk)</span>
+                  <span style="color:var(--warning)" id="ncd-risk-level-diabetes">ปานกลาง ⚠️</span>
+                </div>
+                <div class="impact-bar-outer">
+                  <div class="impact-bar-inner amber" id="ncd-risk-bar-diabetes" style="width: 60%"></div>
+                </div>
+              </div>
+              <!-- Risk Row 2 -->
+              <div style="margin-bottom: 8px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.68rem; font-weight:600; margin-bottom:3px;">
+                  <span id="ncd-risk-label-2">ความดันโลหิตสูง (Hypertension Risk)</span>
+                  <span style="color:var(--primary)" id="ncd-risk-level-bp">ต่ำ ✅</span>
+                </div>
+                <div class="impact-bar-outer">
+                  <div class="impact-bar-inner green" id="ncd-risk-bar-bp" style="width: 35%"></div>
+                </div>
+              </div>
+              <!-- Risk Row 3 -->
+              <div style="margin-bottom: 8px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.68rem; font-weight:600; margin-bottom:3px;">
+                  <span id="ncd-risk-label-3">ไขมันในเส้นเลือด (Atherosclerosis Risk)</span>
+                  <span style="color:var(--primary)" id="ncd-risk-level-chol">ต่ำ ✅</span>
+                </div>
+                <div class="impact-bar-outer">
+                  <div class="impact-bar-inner green" id="ncd-risk-bar-chol" style="width: 25%"></div>
+                </div>
+              </div>
+              <div class="lab-correlation-bubble" style="margin-top: 10px; font-size: 0.65rem;" id="ncd-risk-guidance">
+                🩺 คำแนะนำแพทย์: การสลับอาหารลดโซเดียมช่วยลดความดันลงมาเกณฑ์ปลอดภัย แต่ควรลดน้ำตาลและข้าวขาวเพื่อย่อยน้ำตาลสะสมเบาหวานให้อยู่หมัด
+              </div>
+            </div>
+
+            <!-- SECTION 5: LAB TRACKING (Shown for NCD Program Users) -->
+            <div id="clinical-ncd-section" class="lab-tracking-card">
+              <div style="font-size:0.85rem; font-weight:800; margin-bottom:10px;">🩺 บันทึกผลแล็บทางคลินิก (Lab Tracking)</div>
+              
+              <div class="lab-form-row">
+                <div class="lab-input-box">
+                  <label class="lab-label">HbA1c (%)</label>
+                  <input type="number" step="0.1" class="lab-input" id="lab-hba1c" value="7.2">
+                </div>
+                <div class="lab-input-box">
+                  <label class="lab-label">ความดัน (mmHg)</label>
+                  <input type="text" class="lab-input" id="lab-bp" value="132/84">
+                </div>
+                <div class="lab-input-box">
+                  <label class="lab-label">ไขมัน (mg/dL)</label>
+                  <input type="number" class="lab-input" id="lab-chol" value="215">
+                </div>
+                <button class="lab-btn-save" onclick="saveLabRecord()">บันทึก</button>
+              </div>
+
+              <table class="lab-log-table">
+                <thead>
+                  <tr>
+                    <th>วันที่บันทึก</th>
+                    <th>HbA1c</th>
+                    <th>ความดัน</th>
+                    <th>คอเลสเตอรอล</th>
+                  </tr>
+                </thead>
+                <tbody id="lab-history-tbody">
+                  <tr>
+                    <td>03 มิ.ย. 2569</td>
+                    <td>7.2%</td>
+                    <td>132/84</td>
+                    <td>215 mg/dL</td>
+                  </tr>
+                  <tr>
+                    <td>15 พ.ค. 2569</td>
+                    <td>7.5%</td>
+                    <td>138/88</td>
+                    <td>228 mg/dL</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="lab-correlation-bubble">
+                📊 Food-Lab Correlation: จากบันทึกในรอบ 30 วัน การทาน "ข้าวขาวหรือของหวาน" เกินเป้าหมายติดต่อกัน 3 วัน ส่งผลให้เช้าวันถัดมา ค่าระดับน้ำตาลปลายนิ้วคุณป้าเฉลี่ยเพิ่มขึ้นถึง 18 mg/dL ค่ะ
+              </div>
+            </div> <!-- End of insights-normal-view -->
+
+            <!-- Onboarding Day 1 Insights Empty State -->
+            <div id="insights-empty-view" class="empty-state-view" style="display: none;">
+              <div class="empty-state-emoji">📊📈</div>
+              <div class="empty-state-title">ไม่พบประวัติข้อมูลของคุณ</div>
+              <div class="empty-state-desc">
+                คุณเพิ่งเปิดใช้งานวันแรก ระบบจะเริ่มประมวลผลวิเคราะห์แนวโน้มและวิเคราะห์ความเสี่ยง NCD ให้โดยอัตโนมัติ เมื่อทำการบันทึกข้อมูลโภชนาการติดต่อกันอย่างน้อย 3 วันขึ้นไปครับ
+              </div>
+              <button class="primary-btn" onclick="switchTab('tab-scan')" style="max-width: 220px;">📸 เริ่มสแกนอาหาร</button>
+            </div>
+          </div>
+
+          <!-- ==================== MAIN TAB 5: PROFILE & GAMIFICATION ==================== -->
+          <div class="screen" id="main-tab-profile">
+            <!-- User summary card -->
+            <div class="profile-card">
+              <span class="profile-avatar">👩</span>
+              <div class="profile-info">
+                <div class="profile-name" id="profile-user-name">คุณป้าสมใจ วงศ์สุข</div>
+                <span class="profile-goal-badge" id="profile-ncd-tag">NCD Program • เบาหวาน</span>
+                
+                <div class="profile-stats-row">
+                  <div class="profile-stat-item">
+                    <span class="profile-stat-val">14 วัน</span>
+                    <span class="profile-stat-lbl">ใช้งานสะสม</span>
+                  </div>
+                  <div class="profile-stat-item">
+                    <span class="profile-stat-val" id="profile-meals-logged-count">36 มื้อ</span>
+                    <span class="profile-stat-lbl">มื้อที่บันทึก</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VIRTUAL PET MAIN CARD -->
+            <div class="pet-screen-card">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">สัตว์เลี้ยงสุขภาพของคุณ</div>
+              
+              <div class="pet-full-display" id="pet-interactive-area" onclick="triggerPetReaction()">
+                <div class="pet-hat-overlay" id="pet-equipped-hat">🤠</div>
+                <span class="pet-illust-large" id="pet-large-emoji">🐱</span>
+              </div>
+
+              <div class="pet-full-name" id="pet-display-name">น้องเต้าหู้</div>
+              <div class="pet-level-banner" id="pet-display-level">เลเวล 3 · อารมณ์แจ่มใส 💚</div>
+
+              <div class="pet-exp-container">
+                <div class="pet-exp-label">
+                  <span>EXP</span>
+                  <span id="pet-exp-nums">340 / 500</span>
+                </div>
+                <div class="pet-exp-track">
+                  <div class="pet-exp-fill" id="pet-exp-bar" style="width: 68%"></div>
+                </div>
+              </div>
+              <span style="font-size: 0.58rem; color: var(--text-secondary); margin-top:6px;">[กดที่ตัวสัตว์เลี้ยงเพื่อโต้ตอบและสวมใส่อุปกรณ์]</span>
+            </div>
+
+            <!-- POINTS & SHOP BUTTON -->
+            <div class="points-wallet">
+              <div class="points-balance">
+                <span>🪙</span> <span id="points-val">420</span> แต้ม
+              </div>
+              <button class="points-shop-btn" onclick="openShopModal()">แแลกแต้มรับไอเทม 🛍️</button>
+            </div>
+
+            <!-- GitHub calendar streak calendar grid -->
+            <div class="streak-contribution-box">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary);">ปฏิทินความสำเร็จ 90 วันย้อนหลัง</div>
+              <div class="streak-calendar-grid" id="streak-contrib-grid">
+                <!-- JavaScript populates cells -->
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.55rem; color:var(--text-muted);">
+                <span>น้อย</span>
+                <span style="display:flex; gap:2px;">
+                  <span style="width:7px;height:7px;background:#F1F5F9;display:inline-block;border-radius:1px;"></span>
+                  <span style="width:7px;height:7px;background:#A7F3D0;display:inline-block;border-radius:1px;"></span>
+                  <span style="width:7px;height:7px;background:#10B981;display:inline-block;border-radius:1px;"></span>
+                  <span style="width:7px;height:7px;background:#065F46;display:inline-block;border-radius:1px;"></span>
+                </span>
+                <span>มาก</span>
+              </div>
+            </div>
+
+            <!-- Grid of unlockable achievements badges -->
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin:12px 20px 6px;">เหรียญความสำเร็จ (Achievements)</div>
+            <div class="achievements-grid">
+              <div class="badge-card unlocked" onclick="showAchievementTip('นักบันทึกมือทอง', 'บันทึกมื้ออาหารครบ 14 วันติดต่อกัน')">
+                <span class="badge-icon">🏆</span>
+                <span class="badge-name">นักบันทึกมือทอง</span>
+                <span class="badge-status">สำเร็จแล้ว</span>
+              </div>
+              <div class="badge-card unlocked" onclick="showAchievementTip('ผู้พิชิตโซเดียม', 'จำกัดโซเดียมได้ตามเป้า 2 สัปดาห์')">
+                <span class="badge-icon">🧂</span>
+                <span class="badge-name">ผู้พิชิตโซเดียม</span>
+                <span class="badge-status">สำเร็จแล้ว</span>
+              </div>
+              <div class="badge-card locked" id="achievement-swapper" onclick="showAchievementTip('Smart Swapper', 'กดสับเปลี่ยนอาหารเพื่อสุขภาพ 20 ครั้ง')">
+                <span class="badge-icon">🔄</span>
+                <span class="badge-name">Smart Swapper</span>
+                <span class="badge-status">12 / 20 ครั้ง</span>
+              </div>
+            </div>
+
+            <!-- Public Health Contributor Badge and Opt-in Section -->
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin:14px 20px 6px;">โครงการวิจัยสาธารณสุข</div>
+            <div class="dashboard-card" style="margin: 0 20px 8px; padding: 12px; cursor: pointer; border: 1.5px solid #FDE68A; background: #FFFDF5;" onclick="openPublicHealthOptinScreen()">
+              <div style="display:flex; gap:10px; align-items:center;">
+                <span style="font-size: 1.8rem;" id="profile-ph-badge-icon">🛡️</span>
+                <div style="flex:1;">
+                  <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-primary);" id="profile-ph-badge-name">ผู้พิทักษ์สาธารณสุข (MOPH Contributor)</div>
+                  <div style="font-size: 0.6rem; color: var(--text-secondary);" id="profile-ph-badge-status">สถานะ: ช่วยเหลือแล้ว 36 มื้อ · คลิกตั้งค่าตั้งรับแต้มโบนัส</div>
+                </div>
+                <span style="font-size:0.8rem; color:var(--primary);">⚙️</span>
+              </div>
+            </div>
+
+            <!-- Weekly Missions list -->
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin:14px 20px 6px;">ภารกิจประจำสัปดาห์นี้</div>
+            <div class="mission-card">
+              <div class="mission-top">
+                <span class="mission-desc">ควบคุมน้ำตาลไม่เกินเป้าหมาย 6 วันในสัปดาห์นี้</span>
+                <span class="mission-reward">+50 แต้ม</span>
+              </div>
+              <div class="pet-exp-track" style="margin-top: 8px;">
+                <div class="pet-exp-fill" style="width: 83%; background: var(--warning);"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.55rem; color:var(--text-secondary); margin-top:2px;">
+                <span>ความคืบหน้า</span>
+                <span>5 / 6 วัน</span>
+              </div>
+            </div>
+            <div class="mission-card">
+              <div class="mission-top">
+                <span class="mission-desc">ดื่มน้ำเปล่าชดเชยน้ำหวาน 7 วัน</span>
+                <span class="mission-reward">+40 แต้ม</span>
+              </div>
+              <div class="pet-exp-track" style="margin-top: 8px;">
+                <div class="pet-exp-fill" style="width: 100%;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.55rem; color:var(--text-secondary); margin-top:2px;">
+                <span>สำเร็จแล้ว!</span>
+                <span>7 / 7 วัน</span>
+              </div>
+            </div>
+
+            <!-- Clinical exports prepared section -->
+            <div class="clinical-section-box" id="profile-clinical-section">
+              <div style="font-size:0.85rem; font-weight:800; color:var(--primary-dark);">🏥 เตรียมตัวพบแพทย์ (Clinical Export)</div>
+              <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">
+                ระบบวิเคราะห์ข้อมูล 30 วันและร่างรายงานสรุปให้คุณหมอพบตรวจประเมิน
+              </div>
+              
+              <div class="clinical-preview-bullets">
+                <div class="clinical-bullet">• มีโซเดียมและไขมันเกินเป้าหมายในช่วงเย็นสม่ำเสมอเฉลี่ยสัปดาห์ละ 3 ครั้ง</div>
+                <div class="clinical-bullet">• ค่าน้ำตาลและ HbA1c เฉลี่ยอยู่ในแนวโน้มคงที่ สามารถ Swap สลัดทดแทนของหวานได้ดี</div>
+                <div class="clinical-bullet">• ปริมาณการดื่มน้ำเพียงพอกับเกณฑ์มาตรฐานร่างกายเฉลี่ย 2.1 ลิตรต่อวัน</div>
+              </div>
+
+              <div style="display: flex; gap: 8px; margin-top:10px;">
+                <button class="primary-btn" style="padding: 8px; font-size:0.75rem;" onclick="simulateDoctorPDFExport()">ดาวน์โหลดรายงานประวัติผู้ป่วย (PDF) 📄</button>
+                <button class="primary-btn" style="padding: 8px; font-size:0.75rem; background:#475569;" onclick="shareSuccessLINE()">แชร์ LINE 💬</button>
+              </div>
+            </div>
+
+            <div class="community-card">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--text-primary); margin-bottom:4px;">🙋 ช่วย Nucistion ปรับปรุงเมนูอาหาร</div>
+              <div style="font-size:0.65rem; color:var(--text-secondary); margin-bottom:8px;">
+                ตรวจพิจารณาข้อมูลส้มตำปูปลาร้าจากเพื่อนสมาชิกเพื่อรับเพิ่ม +15 แต้ม
+              </div>
+              <button class="community-contrib-btn" onclick="contributeCommunityWiki()">ช่วยตรวจสอบข้อมูลอาหารสะสม</button>
+            </div>
+
+          </div>
+
+          <!-- Append fullscreen sub-screen overlays inside phone-screens -->
+          
+          <!-- ==================== SCREEN: WEEKLY INSIGHTS (FULL PAGE) ==================== -->
+          <div class="screen-full-page" id="screen-weekly-insights">
+            <div class="full-page-header">
+              <button class="full-page-back-btn" onclick="closeWeeklyInsightsScreen()">✕</button>
+              <div class="full-page-title" style="font-size: 0.82rem;">สรุปสุขภาพประจำสัปดาห์ (Weekly Summary)</div>
+            </div>
+            
+            <div class="weekly-summary-card" style="margin: 0; background: linear-gradient(135deg, #0F6E56 0%, #1D9E75 100%);">
+              <span class="weekly-sum-title" style="color: rgba(255,255,255,0.95);">รายงานรอบ 7 วันที่ผ่านมา</span>
+              <div class="weekly-sum-highlight" id="full-weekly-highlight" style="color: white; font-size: 0.85rem; margin-top: 6px;">คุณคุมน้ำตาลได้ตามเกณฑ์ 6 จาก 7 วัน ยอดเยี่ยมมาก! 🎉</div>
+              <div class="weekly-sum-score" style="color: #FBBF24; font-size: 1.2rem; margin-top: 8px;">Health Score: 85 / 100</div>
+            </div>
+
+            <div style="font-size:0.75rem; font-weight:800; color:var(--text-primary); margin: 14px 0 6px;">📊 อัตราการควบคุมและปริมาณที่ลดได้</div>
+            <div class="reduction-grid" style="margin: 0; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div class="reduction-card success-border" style="margin:0;">
+                <span class="reduction-lbl">🍬 ดัชนีลดน้ำตาลสะสม</span>
+                <span class="reduction-val" id="weekly-reduc-sugar">34% ↓</span>
+                <span class="reduction-sub">เทียบกับสัปดาห์แรก</span>
+              </div>
+              <div class="reduction-card success-border" style="margin:0;">
+                <span class="reduction-lbl">🧂 ดัชนีลดโซเดียมสะสม</span>
+                <span class="reduction-val" id="weekly-reduc-sodium">30% ↓</span>
+                <span class="reduction-sub">เทียบกับสัปดาห์แรก</span>
+              </div>
+            </div>
+
+            <div style="font-size:0.75rem; font-weight:800; color:var(--text-primary); margin: 14px 0 6px;">🩺 การประเมินและคำแนะนำโดยแพทย์ AI</div>
+            <div class="dashboard-card" style="margin:0; padding:12px;">
+              <div style="font-size:0.72rem; font-weight:700; color:var(--primary-dark); margin-bottom:4px;">วิเคราะห์ประวัตินิสัยการกิน</div>
+              <div style="font-size:0.68rem; color:var(--text-secondary); line-height:1.45;" id="weekly-insights-ai-feedback">
+                จากการประเมินคุณสมใจคุมระดับน้ำตาลสะสมได้ดีมากในสัปดาห์นี้ มีเพียงปริมาณโซเดียมในมื้อกลางวันวันศุกร์ที่มีโอกาสเกินเป้าหมายจากบะหมี่น้ำตก แนะนำสลับทานเมนูลดโซเดียมแบบไม่มีซอสในวันถัดไปเพื่อถนอมไตและรักษาความดันให้ปกติยาวนานค่ะ
+              </div>
+            </div>
+
+            <div id="workout-timing-suggestion-section" class="dashboard-card" style="margin-top: 10px; display: none; padding:12px;">
+              <div style="font-size:0.72rem; font-weight:700; color:#0369A1; margin-bottom:4px;">⏱️ Pre/Post Workout Nutrition (เวลาอาหารสำหรับออกกำลังกาย)</div>
+              <div style="font-size:0.65rem; color:var(--text-secondary); line-height:1.4;">
+                • <strong>ก่อนซ้อม 1.5-2 ชม. (Pre-Workout)</strong>: เน้นคาร์บเชิงซ้อนและพลังงานเบาบาง เช่น กล้วยหอมโยเกิร์ต หรือข้าวกล้องอกไก่ต้ม เพื่อเติมไกลโคเจนให้ร่างกายเผาผลาญในฟิตเนส<br>
+                • <strong>หลังซ้อมใน 45 นาที (Post-Workout)</strong>: เน้นทานโปรตีนคุณภาพสูง เช่น แซลมอนย่าง อกไก่ หรือไข่ต้ม ร่วมกับแป้ง เพื่อเพิ่มสปีดการสังเคราะห์โปรตีนและฟื้นกล้ามเนื้ออย่างเต็มที่
+              </div>
+            </div>
+            
+            <button class="primary-btn" style="margin-top: 16px; padding: 10px;" onclick="closeWeeklyInsightsScreen()">กลับสู่แดชบอร์ด</button>
+          </div>
+
+          <!-- ==================== SCREEN: GOAL IMPACT ENGINE (FULL VIEW) ==================== -->
+          <div class="screen-full-page" id="screen-goal-impact">
+            <div class="full-page-header">
+              <button class="full-page-back-btn" onclick="closeGoalImpactScreen()">✕</button>
+              <div class="full-page-title" style="font-size: 0.82rem;">เป้าหมาย & ผลกระทบโภชนาการวันนี้</div>
+            </div>
+            
+            <div class="dashboard-card" style="margin: 0; padding:14px;">
+              <div style="font-size: 0.75rem; font-weight: bold; color: var(--primary-dark); margin-bottom: 8px;" id="gi-full-title">เป้าหมาย: ควบคุมน้ำตาลสะสม (HbA1c) สำหรับเบาหวาน</div>
+              
+              <div class="impact-row" style="margin-top:10px;">
+                <span class="impact-label" style="width: 80px;" id="gi-full-label-1">คุมน้ำตาล</span>
+                <div class="impact-bar-outer">
+                  <div class="impact-bar-inner green" id="gi-full-bar-sugar" style="width: 72%"></div>
+                </div>
+                <span class="impact-value-tag" id="gi-full-val-sugar">72%</span>
+              </div>
+              
+              <div class="impact-row" style="margin-top: 8px;">
+                <span class="impact-label" style="width: 80px;" id="gi-full-label-2">คุมโซเดียม</span>
+                <div class="impact-bar-outer">
+                  <div class="impact-bar-inner amber" id="gi-full-bar-sodium" style="width: 55%"></div>
+                </div>
+                <span class="impact-value-tag" id="gi-full-val-sodium">55%</span>
+              </div>
+              
+              <div style="font-size: 0.68rem; color: var(--text-secondary); margin-top: 10px; line-height: 1.45;" id="gi-full-desc">
+                *การกินวันนี้ช่วยประคองระดับน้ำตาลสะสม (HbA1c) ให้อยู่ในแนวโน้มลดลง แต่การกินโซเดียมมื้อเที่ยงที่เค็มมีผลกระทบปานกลางต่อแรงดันหลอดเลือด
+              </div>
+            </div>
+
+            <div style="font-size:0.75rem; font-weight:800; color:var(--text-primary); margin: 16px 0 6px;">🩺 ความเข้าใจกลไกทางสรีรวิทยา (Clinical Pathophysiology)</div>
+            <div class="dashboard-card" style="margin:0; font-size:0.65rem; line-height:1.45; color:var(--text-secondary); padding: 12px;">
+              <div style="font-weight:700; color:var(--primary-dark); margin-bottom:4px; font-size:0.7rem;">การทำงานของสรีรวิทยาในร่างกายคุณ:</div>
+              • <strong>น้ำตาล & คาร์บ</strong>: เมื่อคุณจำกัดน้ำตาลต่ำกว่า 25g/วัน จะช่วยตับอ่อนในการลดปริมาณการหลั่งฮอร์โมนอินซูลิน ทำให้ความต้านทานอินซูลินลดลง ส่งผลให้อัตราเสื่อมของเบตาเซลล์ตับอ่อนลดลงอย่างมาก คุม HbA1c ระยะยาว<br>
+              • <strong>เกลือโซเดียม</strong>: การคุมเกลือช่วยประคองความสมดุลแรงดันในเลือด ป้องกันไตเสื่อมและการเพิ่มขึ้นของแรงดันตึงตัวของผนังหลอดเลือดแดง (Peripheral Resistance) ถนอมอัตรากรองของหน่วยไตได้โดยตรง
+            </div>
+            
+            <button class="primary-btn" style="margin-top: 16px; padding: 10px;" onclick="closeGoalImpactScreen()">ปิดวิเคราะห์ผลกระทบ</button>
+          </div>
+
+          <!-- ==================== SCREEN: NCD RISK TREND (FULL SCREEN) ==================== -->
+          <div class="screen-full-page" id="screen-ncd-risk-trend">
+            <div class="full-page-header">
+              <button class="full-page-back-btn" onclick="closeNCDRiskTrendScreen()">✕</button>
+              <div class="full-page-title" style="font-size: 0.82rem;">แนวโน้มความเสี่ยงโรค NCD (Risk Trend)</div>
+            </div>
+            
+            <!-- Trend Indicators -->
+            <div class="dashboard-card" style="margin:0; padding:12px;">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--primary-dark); margin-bottom:10px;">ข้อมูลผลแล็บการวิเคราะห์ล่าสุด</div>
+              
+              <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:700; border-bottom:1px solid var(--border); padding-bottom:6px;">
+                <span>ตัวแปรคลินิก</span>
+                <span>เป้าหมายแพทย์</span>
+                <span>ล่าสุด</span>
+              </div>
+              
+              <div style="display:flex; justify-content:space-between; font-size:0.68rem; padding: 6px 0; border-bottom:1px solid var(--border);">
+                <span>น้ำตาลสะสม HbA1c</span>
+                <span>&lt; 6.5 %</span>
+                <span style="color:var(--warning); font-weight:700;">7.2 % ⚠️</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.68rem; padding: 6px 0; border-bottom:1px solid var(--border);">
+                <span>ความดันโลหิต</span>
+                <span>&lt; 130/80 mmHg</span>
+                <span style="color:var(--primary-dark); font-weight:700;">132/84 mmHg ✅</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.68rem; padding: 6px 0;">
+                <span>คอเลสเตอรอลรวม</span>
+                <span>&lt; 200 mg/dL</span>
+                <span style="color:var(--danger); font-weight:700;">215 mg/dL ❌</span>
+              </div>
+            </div>
+
+            <!-- Risk Timeline Tracker -->
+            <div style="font-size:0.75rem; font-weight:800; color:var(--text-primary); margin: 16px 0 6px;">📈 อัตราพยากรณ์ความปลอดภัยระยะยาว (Risk Timeline)</div>
+            <div class="dashboard-card" style="margin: 0; padding:12px;">
+              <div style="font-size:0.72rem; font-weight:700; margin-bottom:8px; color:var(--text-primary);">ประเมินอัตราอันตรายต่อสุขภาพปัจจุบัน</div>
+              
+              <div class="impact-row">
+                <span class="impact-label" style="width: 100px; font-size:0.65rem;">ความดันโลหิต/โรคไต</span>
+                <div class="impact-bar-outer" style="height:8px;">
+                  <div class="impact-bar-inner green" id="trend-bar-risk-bp" style="width: 35%"></div>
+                </div>
+                <span class="impact-value-tag" id="trend-lbl-risk-bp" style="font-size:0.65rem;">ต่ำ ✅</span>
+              </div>
+              <div class="impact-row" style="margin-top:6px;">
+                <span class="impact-label" style="width: 100px; font-size:0.65rem;">น้ำตาลเบาหวาน HbA1c</span>
+                <div class="impact-bar-outer" style="height:8px;">
+                  <div class="impact-bar-inner amber" id="trend-bar-risk-diabetes" style="width: 60%"></div>
+                </div>
+                <span class="impact-value-tag" id="trend-lbl-risk-diabetes" style="font-size:0.65rem;">ปานกลาง ⚠️</span>
+              </div>
+              <div class="impact-row" style="margin-top:6px;">
+                <span class="impact-label" style="width: 100px; font-size:0.65rem;">ดัชนีไขมันเกลาะหลอดเลือด</span>
+                <div class="impact-bar-outer" style="height:8px;">
+                  <div class="impact-bar-inner red" id="trend-bar-risk-chol" style="width: 80%"></div>
+                </div>
+                <span class="impact-value-tag" id="trend-lbl-risk-chol" style="font-size:0.65rem;">สูง 🔴</span>
+              </div>
+              
+              <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:10px; line-height:1.45;" id="trend-risk-guidance-text">
+                *ประเมินการตรวจความเสี่ยงอัจฉริยะวิเคราะห์จากการทานส้มตำปูปลาร้าบ่อยและการลดลงของน้ำหนักตัว 3.0 กิโลกรัม แนวโน้มความปลอดภัยของไตและตับอยู่ในเกณฑ์บวกขึ้น
+              </div>
+            </div>
+
+            <!-- SECTION 2.5: LIFESTYLE-PATTERN RISK ANALYZER -->
+            <div style="font-size:0.75rem; font-weight:800; color:var(--text-primary); margin: 16px 0 6px;">⚠️ ความเสี่ยงจากพฤติกรรมสะสม (Lifestyle Risk - 2.5)</div>
+            <div class="dashboard-card" style="margin: 0; padding:12px; border-left: 4px solid var(--warning);">
+              <div style="font-size:0.7rem; font-weight:700; margin-bottom:8px; color:var(--text-primary); display: flex; justify-content: space-between;">
+                <span>วิเคราะห์ความเสี่ยง 90 วันจากพฤติกรรมจริง</span>
+                <span style="font-size: 0.58rem; color: var(--text-muted);">ประเมินผลอัจฉริยะ</span>
+              </div>
+              <div id="lifestyle-risk-alerts-container" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.68rem; line-height: 1.45;">
+                <!-- Alerts populate dynamically -->
+              </div>
+            </div>
+
+            <button class="primary-btn" style="margin-top: 16px; padding: 10px;" onclick="closeNCDRiskTrendScreen()">ปิดวิเคราะห์ความเสี่ยง</button>
+          </div>
+
+          <!-- ==================== SCREEN: PUBLIC HEALTH OPT-IN & BADGES ==================== -->
+          <div class="screen-full-page" id="screen-public-health-optin">
+            <div class="full-page-header">
+              <button class="full-page-back-btn" onclick="closePublicHealthOptinScreen()">✕</button>
+              <div class="full-page-title" style="font-size: 0.82rem;">โครงการวิจัยสาธารณสุขนิรนาม</div>
+            </div>
+            
+            <div class="dashboard-card" style="margin: 0; background: linear-gradient(135deg, #10B981 0%, #047857 100%); color: white; text-align: center; padding: 20px;">
+              <div style="font-size: 2.2rem; margin-bottom: 4px;">🛡️</div>
+              <div style="font-size: 0.85rem; font-weight: 800;" id="ph-badge-status-title">ผู้พิทักษ์สาธารณสุข (MOPH Contributor)</div>
+              <div style="font-size: 0.62rem; color: rgba(255,255,255,0.85); margin-top: 2px;">โครงการวิจัยข้อมูลโภชนาการร่วมกับกระทรวงสาธารณสุข</div>
+              <div style="font-size: 0.72rem; font-weight: bold; background: rgba(255,255,255,0.25); padding: 4px 8px; border-radius: 20px; display: inline-block; margin-top: 8px;" id="ph-optin-status-badge">สถานะ: เชื่อมต่อข้อมูลวิจัยนิรนาม</div>
+            </div>
+
+            <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-primary); margin: 14px 0 6px;">⚙️ ตั้งค่าความเป็นส่วนตัว & การแบ่งปัน</div>
+            <div class="dashboard-card" style="margin:0; padding:12px;">
+              <div class="toggle-row" style="padding: 4px 0;">
+                <div class="toggle-info">
+                  <span class="toggle-label" style="font-size:0.75rem; font-weight:700;">ส่งข้อมูลโภชนาการนิรนามแก่ทาง สธ.</span>
+                  <span class="toggle-desc" style="font-size:0.6rem; color:var(--text-secondary);">เมนูอาหารที่บันทึกจะถูกลบข้อมูลระบุตัวตนและส่งต่อไปยังศูนย์วิจัยการป้องกันโรคเรื้อรัง กองโภชนาการ กรมอนามัย (รับเพิ่ม +15 แต้มสะสมต่อมื้อที่บันทึก)</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="optin-moph-check" onchange="toggleMophOptinState(this.checked)" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="dashboard-card" style="margin-top: 10px; padding:12px;">
+              <div style="font-size:0.72rem; font-weight:700; color:var(--primary-dark); margin-bottom:4px;">📊 ประวัติและแต้มการร่วมมือของคุณ</div>
+              <div style="display:flex; justify-content:space-between; font-size:0.68rem; margin-bottom:4px;">
+                <span>มื้ออาหารนิรนามสะสมที่ร่วมบริจาค:</span>
+                <span style="font-weight:700;" id="ph-contrib-meals-count">36 มื้อ</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.68rem;">
+                <span>แต้มสะสมโบนัสสุขภาพที่ได้รับแล้ว:</span>
+                <span style="font-weight:700; color:#D97706;" id="ph-contrib-points-bonus">+540 แต้ม</span>
+              </div>
+            </div>
+
+            <button class="primary-btn" style="margin-top: 16px; padding: 10px;" onclick="closePublicHealthOptinScreen()">บันทึกข้อมูลและปิดหน้าจอ</button>
+          </div>
+
+        </div>
+        <!-- END phone-screens -->
+
+        <!-- ===== BOTTOM NAVIGATION BUTTONS ===== -->
+        <div class="bottom-nav" id="app-bottom-nav" style="display: none;">
+          <button class="nav-item active" id="nav-home" onclick="switchTab('tab-home')">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">หน้าหลัก</span>
+          </button>
+          
+          <button class="nav-item scan-item" id="nav-scan" onclick="switchTab('tab-scan')">
+            <div class="scan-btn-inner">
+              <span class="nav-icon" style="font-size:1.4rem;">📷</span>
+            </div>
+            <span class="nav-label" style="margin-top:2px;">สแกน</span>
+          </button>
+
+          <button class="nav-item" id="nav-decision" onclick="switchTab('tab-decision')">
+            <span class="nav-icon">🧭</span>
+            <span class="nav-label">ตัดสินใจ</span>
+          </button>
+          
+          <button class="nav-item" id="nav-insights" onclick="switchTab('tab-insights')">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">ข้อมูล</span>
+          </button>
+          
+          <button class="nav-item" id="nav-profile" onclick="switchTab('tab-profile')">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">โปรไฟล์</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ⚙️ DEVELOPER / JUDGE CONTROL SIDEBAR -->
+    <!-- ========================================== -->
+    <div class="control-panel">
+      <div class="control-panel-title">Nucistion Sandbox Control</div>
+      
+      <div class="control-section">
+        <span class="control-section-lbl">จำลองเปลี่ยนโปรไฟล์เป้าหมาย (Personas)</span>
+        <div class="btn-grid-control">
+          <button class="control-btn" onclick="applyPresetPersona('somjai')">👩‍🦳 คุณสมใจ (เบาหวาน Type 2)</button>
+          <button class="control-btn" onclick="applyPresetPersona('anucha')">💪 นายอนุชา (เพิ่มกล้ามเนื้อ/ออกกำลังกาย)</button>
+          <button class="control-btn" onclick="applyPresetPersona('keaw')">🏃 น้องแก้ว (ลดน้ำหนักทั่วไป)</button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <span class="control-section-lbl">จำลอง Push Notifications</span>
+        <div class="btn-grid-control">
+          <button class="control-btn" onclick="simulateFloatingNotification(1)">🍽️ มื้ออาหาร: แจ้งเตือนบันทึกอาหารเที่ยง</button>
+          <button class="control-btn" onclick="simulateFloatingNotification(2)">🥦 โภชนาการเป็นบวก: โปรตีนมื้อเช้าดีมาก</button>
+          <button class="control-btn" onclick="simulateFloatingNotification(3)">💚 ปลอบใจ (Emotional Reset): พรุ่งนี้สู้ใหม่</button>
+          <button class="control-btn" onclick="simulateFloatingNotification(4)">🔥 ยินดี: บันทึกครบ 7 วัน สัตว์เลี้ยงดีใจ</button>
+          <button class="control-btn" onclick="simulateFloatingNotification(5)">📋 การแพทย์: นัดหมายพบแพทย์ 2 วันหน้า</button>
+          <button class="control-btn" onclick="simulateFloatingNotification(6)">🧋 ตรวจพบพฤติกรรม (Trigger): ชาไทยวันศุกร์</button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <span class="control-section-lbl">ความคืบหน้า Prototype</span>
+        <div class="btn-grid-control">
+          <button class="control-btn" style="background:#FFF1F2; border-color:#FDA4AF; color:#9F1239;" onclick="resetAppDemo()">🔄 รีเซ็ตกระบวนการทั้งหมด (Onboarding)</button>
+          <button class="control-btn" style="background:var(--primary-light); border-color:var(--primary); color:var(--primary-dark);" onclick="bypassOnboarding()">⏩ ข้าม Onboarding ไปยัง หน้าหลัก ทันที</button>
+          <button class="control-btn" onclick="addMockPoints(100)">🪙 รับ +100 แต้มสะสม</button>
+          <button class="control-btn" onclick="addMockPetExp(80)">🍖 สัตว์เลี้ยงกินขนม (+80 EXP)</button>
+          <button class="control-btn" onclick="triggerConfettiCelebrate()">🎉 แสดง Confetti (ฉลองเป้าหมาย)</button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <span class="control-section-lbl">จำลองฟังก์ชันวิเคราะห์ (Advanced Demo Options)</span>
+        <div class="btn-grid-control">
+          <button class="control-btn" style="background:#ECFDF5; border-color:#A7F3D0; color:#065F46;" onclick="simulateNavyCircumferenceDemo()">📏 จำลองคำนวณสูตรราชนาวี (Navy Formula)</button>
+          <button class="control-btn" style="background:#F5F3FF; border-color:#DDD6FE; color:#5B21B6;" onclick="simulateHatchPetEgg()">🦖 ฟักไข่สัตว์เลี้ยงเป็นร่าง 2 (วัยเตาะแตะ)</button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <span class="control-section-lbl">จำลองสถานะระบบ (Sandbox State Simulation)</span>
+        <div class="btn-grid-control">
+          <button class="control-btn" style="background: #FFFBEB; border-color: #FBBF24; color: #B45309;" id="sim-btn-offline" onclick="toggleOfflineMode()">📴 สลับเป็นโหมดออฟไลน์ (Toggle Offline Mode)</button>
+          <button class="control-btn" style="background: #EEF2FF; border-color: #C7D2FE; color: #4338CA;" id="sim-btn-dayone" onclick="toggleEmptyState()">🌱 สลับเป็นวันแรกไม่มีข้อมูล (Toggle Day 1 State)</button>
+          <button class="control-btn" style="background: #FDF2F8; border-color: #FBCFE8; color: #BE185D;" id="sim-btn-scanerror" onclick="toggleScanErrorSimulation()">⚠️ สลับจำลองระบบสแกนล้มเหลว (Toggle Scan Error)</button>
+        </div>
+      </div>
+
+      <div class="control-status-box">
+        <strong>สถานะจำลองปัจจุบัน:</strong><br>
+        • ผู้ใช้หลัก: <span id="sim-lbl-user">คุณป้าสมใจ (โรคเบาหวาน)</span><br>
+        • แต้มสะสม: <span id="sim-lbl-points">420</span> แต้ม<br>
+        • สัตว์เลี้ยง: <span id="sim-lbl-pet">น้องเต้าหู้ (Lv. 3)</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 🛍️ OVERLAY DIALOG MODALS -->
+  <!-- ========================================== -->
+  
+  <!-- Points exchange shop Modal -->
+  <div class="overlay-screen-modal" id="modal-shop">
+    <div class="overlay-modal-card">
+      <button class="modal-close-btn" onclick="closeShopModal()">✕</button>
+      <div class="modal-title">ร้านค้าอุปกรณ์ตกแต่งสัตว์เลี้ยง 🛍️</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:14px;">
+        นำแต้มสะสมมาแลกไอเทมประดับเพื่อเพิ่มพฤติกรรมและความแฮปปี้ให้น้องเต้าหู้กันค่ะ!
+      </div>
+
+      <div class="shop-grid">
+        <div class="shop-item-card">
+          <span class="shop-item-icon">🤠</span>
+          <span class="shop-item-name">หมวกคาวบอยจอมซน</span>
+          <span class="shop-item-price">🪙 100 แต้ม</span>
+          <button class="shop-item-buy-btn" onclick="buyShopItem('cowboy_hat', 100, '🤠')">แลกซื้อ</button>
+        </div>
+        <div class="shop-item-card">
+          <span class="shop-item-icon">👑</span>
+          <span class="shop-item-name">มงกุฎเจ้าหญิงหิมะ</span>
+          <span class="shop-item-price">🪙 250 แต้ม</span>
+          <button class="shop-item-buy-btn" onclick="buyShopItem('crown', 250, '👑')">แลกซื้อ</button>
+        </div>
+        <div class="shop-item-card">
+          <span class="shop-item-icon">🎩</span>
+          <span class="shop-item-name">หมวกมายากลสุภาพบุรุษ</span>
+          <span class="shop-item-price">🪙 150 แต้ม</span>
+          <button class="shop-item-buy-btn" onclick="buyShopItem('magician_hat', 150, '🎩')">แลกซื้อ</button>
+        </div>
+        <div class="shop-item-card">
+          <span class="shop-item-icon">🎀</span>
+          <span class="shop-item-name">โบว์สีชมพูน่ารัก</span>
+          <span class="shop-item-price">🪙 50 แต้ม</span>
+          <button class="shop-item-buy-btn" onclick="buyShopItem('ribbon', 50, '🎀')">แลกซื้อ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Restaurant Full Menu details Modal -->
+  <div class="overlay-screen-modal" id="modal-restaurant-menu">
+    <div class="overlay-modal-card">
+      <button class="modal-close-btn" onclick="closeRestaurantMenuModal()">✕</button>
+      <div class="modal-title" id="rest-menu-title">รายการอาหารทั้งหมด</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:12px;">
+        คะแนนเมนูอ้างอิงจากเกณฑ์การแพทย์ NCD ของคุณ:
+      </div>
+      <div class="search-results-list" id="rest-menu-items-list">
+        <!-- Javascript populates menus -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievement unlock tips Modal -->
+  <div class="overlay-screen-modal" id="modal-achievement-tip">
+    <div class="overlay-modal-card" style="text-align: center; max-width: 320px;">
+      <button class="modal-close-btn" onclick="closeAchievementTipModal()">✕</button>
+      <div style="font-size: 3rem; margin: 10px 0;" id="ach-tip-icon">🏆</div>
+      <div class="modal-title" id="ach-tip-title" style="border-bottom:none; margin-bottom:4px; padding-bottom:0;">เหรียญเกียรติยศ</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);" id="ach-tip-desc">คำอธิบายความสำเร็จรางวัล</div>
+      <button class="primary-btn" style="margin-top: 14px; padding: 10px;" onclick="closeAchievementTipModal()">ตกลง</button>
+    </div>
+  </div>
+
+  <!-- Meal Quality Score Details Modal -->
+  <div class="overlay-screen-modal" id="modal-meal-quality">
+    <div class="overlay-modal-card">
+      <button class="modal-close-btn" onclick="closeMealQualityModal()">✕</button>
+      <div class="modal-title">รายละเอียดคะแนนคุณภาพอาหารวันนี้ 📊</div>
+      
+      <div style="display:flex; flex-direction:column; align-items:center; margin: 15px 0;">
+        <div class="score-circle amber" id="modal-score-circle" style="width: 70px; height: 70px; font-size: 1.6rem; color: white;">58</div>
+        <div style="font-size:0.95rem; font-weight:800; margin-top:8px;" id="modal-score-badge">พอใช้</div>
+      </div>
+
+      <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:12px;">
+        การประเมินคะแนนคุณภาพคำนวณจากสารอาหารที่เหมาะสมกับคุณป้าสมใจ:
+      </div>
+
+      <!-- Breakdown -->
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; background:var(--bg); padding:10px; border-radius:8px; align-items:center;">
+          <span style="font-size:0.75rem; font-weight:600;">🥬 หมวดหมู่ผักและใยอาหาร (Veggies & Fiber)</span>
+          <span style="font-size:0.75rem; font-weight:700; color:var(--primary-dark);" id="mq-breakdown-fiber">+30 แต้ม (ดีเยี่ยม)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:var(--bg); padding:10px; border-radius:8px; align-items:center;">
+          <span style="font-size:0.75rem; font-weight:600;">🥩 โปรตีนและไขมันดี (Protein & Good Fats)</span>
+          <span style="font-size:0.75rem; font-weight:700; color:var(--primary-dark);" id="mq-breakdown-protein">+25 แต้ม (ดีเยี่ยม)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:var(--bg); padding:10px; border-radius:8px; align-items:center;">
+          <span style="font-size:0.75rem; font-weight:600;">🍬 การจำกัดน้ำตาล (Sugar Control)</span>
+          <span style="font-size:0.75rem; font-weight:700; color:var(--warning);" id="mq-breakdown-sugar">-15 แต้ม (สูงเล็กน้อย)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:var(--bg); padding:10px; border-radius:8px; align-items:center;">
+          <span style="font-size:0.75rem; font-weight:600;">🧂 การควบคุมเกลือโซเดียม (Sodium Control)</span>
+          <span style="font-size:0.75rem; font-weight:700; color:var(--danger);" id="mq-breakdown-sodium">-12 แต้ม (เค็มสะสมมื้อเที่ยง)</span>
+        </div>
+      </div>
+
+      <div class="lab-correlation-bubble" style="font-size:0.72rem; margin-top:10px; line-height:1.45;" id="mq-tip">
+        💡 คำแนะนำเชิงบวก: มื้อถัดไปแนะนำหลีกเลี่ยงน้ำจิ้มของทอด และลดของหวานเพื่อดึงระดับคะแนนให้ขึ้นมาอยู่ในเกณฑ์ดีเยี่ยม (>80) ได้เลยนะคะ!
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetti layer element -->
+  <div class="confetti-overlay" id="confetti-canvas-container">
+    <!-- Confetti dynamic blocks generated here -->
+  </div>
+
+  <script src="app.js?v=1.0.2"></script>
+</body>
+</html>
