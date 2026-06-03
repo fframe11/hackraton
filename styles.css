@@ -1425,10 +1425,9 @@ input:checked + .slider::before {
 .scan-guide-corner.tr { top: -1px; right: -1px; border-top-width: 3px; border-right-width: 3px; border-radius: 0 6px 0 0; }
 .scan-guide-corner.bl { bottom: -1px; left: -1px; border-bottom-width: 3px; border-left-width: 3px; border-radius: 0 0 0 6px; }
 .scan-guide-corner.br { bottom: -1px; right: -1px; border-bottom-width: 3px; border-right-width: 3px; border-radius: 0 0 6px 0; }
-
 .scan-guide-lbl {
   position: absolute;
-  bottom: -28px;
+  top: -28px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
