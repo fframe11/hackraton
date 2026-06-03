@@ -1875,6 +1875,8 @@ function resetScanTab() {
   document.getElementById('barcode-result-card').style.display = 'none';
   document.getElementById('ai-result-content').style.display = 'none';
   document.getElementById('camera-viewfinder').style.display = 'flex';
+  const inst = document.getElementById('ai-scan-instructions');
+  if (inst) inst.style.display = 'block';
 }
 
 function switchScanSubtab(sub) {
@@ -1902,6 +1904,8 @@ function simulateAICapture() {
   document.getElementById('ai-loading').style.display = 'block';
   document.getElementById('ai-result-content').style.display = 'none';
   document.getElementById('ai-scan-error-view').style.display = 'none';
+  const inst = document.getElementById('ai-scan-instructions');
+  if (inst) inst.style.display = 'none';
   
   const fill = document.getElementById('ai-progress-fill');
   let pct = 0;

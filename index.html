@@ -685,6 +685,29 @@
                 
                 <!-- CAMERA SUB-TAB VIEW (default after capture) -->
                 <div class="scan-tab-pane active" id="pane-photo">
+                  <!-- AI Scan instructions when viewfinder is idle -->
+                  <div id="ai-scan-instructions" style="padding: 24px 16px; text-align: center;">
+                    <div style="font-size: 2.2rem; margin-bottom: 12px;">🤖</div>
+                    <h4 style="font-size: 0.85rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">สแกนโภชนาการอัจฉริยะด้วย AI</h4>
+                    <p style="font-size: 0.68rem; color: var(--text-secondary); line-height: 1.4; max-width: 260px; margin: 0 auto 16px;">
+                      เล็งจานอาหารให้อยู่ในกรอบด้านบน แล้วกดปุ่มชัตเตอร์วงกลมสีขาวเพื่อสแกนสารอาหารและปริมาณโซเดียมสะสมโดยอัตโนมัติ
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 8px; text-align: left; max-width: 250px; margin: 0 auto; background: var(--bg); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                      <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.65rem; color: var(--text-secondary);">
+                        <span>📸</span>
+                        <span><strong>ถ่ายมุมตรง:</strong> ให้เห็นรายละเอียดวัตถุดิบและสัดส่วนที่ชัดเจน</span>
+                      </div>
+                      <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.65rem; color: var(--text-secondary);">
+                        <span>💡</span>
+                        <span><strong>เลี่ยงเงาตกกระทบ:</strong> ถ่ายในที่สว่างเพื่อผลลัพธ์ที่แม่นยำที่สุด</span>
+                      </div>
+                      <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.65rem; color: var(--text-secondary);">
+                        <span>⚠️</span>
+                        <span><strong>คุม NCD:</strong> ระบบจะเตือนปริมาณโซเดียมและน้ำตาลสีแดงทันทีหากสูงเกินเกณฑ์</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- Skeleton dynamic indicator while analysis runs -->
                   <div id="ai-loading" style="display: none; padding: 20px 0;">
                     <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; text-align: center;">🤖 AI กำลังวิเคราะห์จานอาหาร...</div>
